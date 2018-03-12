@@ -1,0 +1,32 @@
+{
+  "name": "toutiao",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "react": "16.2.0",
+    "react-native": "0.52.0",
+    "react-native-code-push": "5.1.3-beta",
+    "react-native-fetch-blob": "^0.10.8",
+    "react-native-gesture-handler": "^1.0.0-alpha.40",
+    "react-native-root-toast": "^3.0.0",
+    "react-native-scrollable-tab-view": "https://github.com/qianbaofe/react-native-scrollable-tab-view.git",
+    "react-native-splash-screen": "^3.0.6",
+    "react-native-storage": "^0.2.2",
+    "react-native-vector-icons": "^4.5.0",
+    "react-native-wechat": "^1.9.9",
+    "react-navigation": "^1.0.0-beta.27"
+  },
+  "devDependencies": {
+    "babel-jest": "22.1.0",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "22.1.1",
+    "react-test-renderer": "16.2.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
