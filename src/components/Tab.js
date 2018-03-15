@@ -12,6 +12,7 @@ import {
     DeviceEventEmitter,
     Text,
 } from "react-native";
+import {ifIphoneX} from '../utils/iphoneX';
 export default class Tab extends Component {
     static defaultProps = {
     };
@@ -71,7 +72,7 @@ const styles = {
         borderTopWidth:StyleSheet.hairlineWidth,
         borderTopColor:Color.dddddd,
         width:WIDTH,
-        height: Platform.OS==='ios'?49:50,
+        height: Platform.OS==='ios'?ifIphoneX(83,50):50,
         backgroundColor:'white',
         flexDirection:'row',
         justifyContent:'space-around',

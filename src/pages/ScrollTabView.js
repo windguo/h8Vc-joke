@@ -36,6 +36,7 @@ import {
     NetInfo
 } from 'react-native';
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view';
+import LoadingSpinner from '../components/pull/LoadingSpinner';
 import Button from '../components/Button';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
@@ -59,7 +60,7 @@ export  default  class ScrollTabView extends Component {
     static navigationOptions = {
         tabBarLabel: '最新',
         tabBarIcon: ({tintColor,focused}) => (
-            <MaterialCommunityIcons name="new-box" size={22} color={focused ? "red":'black'} />
+            <IconSimple name="fire" size={22} color={focused ? "red":'black'} />
         ),
         header: ({navigation}) => {
             return (
@@ -89,6 +90,8 @@ export  default  class ScrollTabView extends Component {
         this.state = {
             sectionList: [],
             page: 0,
+            renderLoading:false,
+            renderError:false,
         };
 
     }
@@ -153,6 +156,7 @@ export  default  class ScrollTabView extends Component {
         });
         InteractionManager.runAfterInteractions(() => {
             this.loadData();
+            this.setState({renderLoading:true});
         });
     }
     componentWillUnmount() {
@@ -170,6 +174,11 @@ export  default  class ScrollTabView extends Component {
     }
     handleConnectivityChange = (status) =>{
         console.log('status change:' , status);
+
+        if (status.type !== 'none'){
+            this.loadData();
+            this.setState({renderLoading:true});
+        }
     }
     codePushDownloadDidProgress(progress) {
 
@@ -208,11 +217,15 @@ export  default  class ScrollTabView extends Component {
             ...baseConfig.BaseHeaders,
         }).then((res) => res.json()).then((responseJson) => {
             console.log("ZZZZ",responseJson);
+            this.setState({renderLoading:false});
+            this.setState({renderError:false});
             if ((responseJson.result instanceof Array) && responseJson.result.length > 0) {
                 WRITE_CACHE(storageKeys.sectionList, responseJson.result);
                 this.setState({sectionList: responseJson.result});
             }
         }).catch((err) => {
+            this.setState({renderLoading:false});
+            this.setState({renderError:true});
             READ_CACHE(storageKeys.sectionList, (res) => {
                 if (res && res.length > 0) {
                     this.setState({sectionList: res});
@@ -220,7 +233,7 @@ export  default  class ScrollTabView extends Component {
                 }
             }, (err) => {
             });
-            Toast.show(err.message, {
+            Toast.show('网络错误', {
                 duration: Toast.durations.LONG,
                 position: Toast.positions.BOTTOM,
                 shadow: true,
@@ -268,9 +281,30 @@ export  default  class ScrollTabView extends Component {
             }));
             return list;
         }
+    _renderError = ()=>{
+        return (
+            <View style={[styles.contain,{justifyContent:'center',alignItems:'center'}]}>
+                {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
+                <TouchableOpacity onPress={()=>this.loadData()}>
+                    <View style={{justifyContent:'center', alignItems:'center'}}>
+                        <Image style={{width:SCALE(323),height:SCALE(271)}} source={require('../assets/nonetwork.png')}/>
+                        <Text style={{fontSize:FONT(15),color:Color.C666666}}>网络无法连接，点击屏幕重试</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>)
+    };
+    _renderLoading = ()=> {
+        return (<View style={styles.contain}>
+            {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
+            <LoadingSpinner type="normal"/></View>)
+    };
 
-        render()
-        {
+    render() {
+        if (this.state.renderLoading) {
+            return this._renderLoading();
+        } else if (this.state.renderError) {
+            return this._renderError();
+        } else {
             return (
                 <View style={{flex: 1}}>
                     {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
@@ -281,6 +315,8 @@ export  default  class ScrollTabView extends Component {
             );
         }
     }
+
+}
     const header = {
         backgroundColor: '#C7272F',
         ...ifIphoneX({
@@ -295,6 +331,22 @@ export  default  class ScrollTabView extends Component {
         alignItems:'flex-end'
     }
 
+const styles = StyleSheet.create({
+    contain:{
+        flex:1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffffff'
+    },
+    footer:{
+        height: 50,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopWidth: 1,
+        borderColor: "#CED0CE"
+    }
+});
 
 
 

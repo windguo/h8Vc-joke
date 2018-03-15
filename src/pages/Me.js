@@ -45,6 +45,8 @@ import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import urlConfig  from  '../../src/utils/urlConfig';
+import PureModalUtil from '../utils/PureModalUtil';
+import * as WeChat from 'react-native-wechat';
 export  default  class Me extends Component {
     static navigationOptions = {
         tabBarLabel: '我的',
@@ -63,8 +65,14 @@ export  default  class Me extends Component {
     };
     constructor(props) {
         super(props);
+        this.state = {
+            visible:false,
+            ViewHeight:new Animated.Value(0)
+        };
     }
-    componentDidMount() {}
+    componentWillMount() {
+        this._ViewHeight = new Animated.Value(0);
+    }
 
     pushToWeb = (params) => {
         let url = '';
@@ -75,24 +83,156 @@ export  default  class Me extends Component {
         }
         this.props.navigation.navigate('Web', {url:url});
     }
+    pushToAppStore = ()=> {
+        var url = Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc';
+        Linking.openURL(url)
+            .catch((err)=>{
+                console.log('An error occurred', err);
+            });
+    }
+    clickToShare = (type) => {
+        this.close();
+        WeChat.isWXAppInstalled().then((isInstalled) => {
+            if (isInstalled) {
+                if (type === 'Session') {
+                    WeChat.shareToSession({
+                        title: "【哈吧笑话分享】",
+                        description: '海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？',
+                        type: 'news',
+                        webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc',
+                        thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png',
+                    }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
+                        Toast.show(error.message);
+                    }});
+                } else {
+                    WeChat.shareToTimeline({
+                        title: "海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？",
+                        description: "海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？",
+                        type: 'news',
+                        webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc' ,
+                        thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png',
+                    }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
+                        if (error.message != -2) {
+                            Toast.show(error.message);
+                        }
+                    });
+                }
+            } else {
+                //Toast.show("没有安装微信软件，请您安装微信之后再试");
+            }
+        });
+    }
+    renderSpinner = (text) => {
+        return (
+            <TouchableWithoutFeedback
+                onPress={() => {this.setState({visible: false});}}>
+                <View key="spinner" style={styles.spinner}>
+                    <Animated.View style={{  justifyContent: 'center',
+                        width:WIDTH,
+                        height: this._ViewHeight,
+                        backgroundColor: '#fcfcfc',
+                        position:'absolute',
+                        left:0,
+                        right:0,
+                        bottom:0,
+                        overflow:'hidden'}}>
+                        <View style={styles.shareParent}>
+                            <TouchableOpacity
+                                style={styles.base}
+                                onPress={()=>this.clickToShare('Session')}
+                            >
+                                <View style={styles.shareContent}>
+                                    <Image style={styles.shareIcon} source={require('../assets/share_icon_wechat.png')} />
+                                    <Text style={styles.spinnerTitle}>微信好友</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.base}
+                                onPress={()=>this.clickToShare('TimeLine')}
+                            >
+                                <View style={styles.shareContent}>
+                                    <Image style={styles.shareIcon} source={require('../assets/share_icon_moments.png')} />
+                                    <Text style={styles.spinnerTitle}>微信朋友圈</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{height:10,backgroundColor:'#f5f5f5'}}></View>
+                        <View style={{justifyContent:'center',alignItems:'center',flex:1}}>
+                            <Text style={{ fontSize: 16, color: 'black',textAlign: 'center' }}>取消</Text>
+                        </View>
+                    </Animated.View>
+                </View>
+            </TouchableWithoutFeedback>
+        );
+    };
+    show = ()=>{
+        this._ViewHeight.setValue(0);
+        this.setState({
+            visible:true
+        },  Animated.timing(this._ViewHeight, {
+            fromValue:0,
+            toValue: 140, // 目标值
+            duration: 200, // 动画时间
+            easing: Easing.linear // 缓动函数
+        }).start());
+    };
+    close = ()=>{
+        this.setState({
+            visible:false
+        });
+    };
     render() {
         return (
-           <View style={{flex:1,backgroundColor:'white'}}>
+           <View style={{flex:1,backgroundColor:Color.f5f5f5}}>
+               <View style={{width:WIDTH,height:25,backgroundColor:Color.f5f5f5}}/>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
                <TouchableOpacity activeOpacity={1} onPress={()=>{this.pushToWeb('yjfk')}}>
-                   <View style={{flexDirection:'row',alignItems:'center',height:50}}>
-                       <MaterialIcons name="feedback" size={22} color={'black'} style={{marginLeft:20}}/>
-                       <Text style={{marginLeft:10}}>意见反馈</Text>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="question" size={22} color={'black'} />
+                           <Text style={{marginLeft:10}}>意见反馈</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
                    </View>
                </TouchableOpacity>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
                <TouchableOpacity activeOpacity={1} onPress={()=>{this.pushToWeb('yhsyxy')}}>
-                   <View style={{flexDirection:'row',alignItems:'center',height:50}}>
-                       <Feather name="file-text" size={22} color={'black'} style={{marginLeft:20}}/>
-                       <Text style={{marginLeft:10}}>用户使用协议</Text>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="doc" size={22} color={'black'} />
+                           <Text style={{marginLeft:10}}>用户使用协议</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
                    </View>
                </TouchableOpacity>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
+               <View style={{width:WIDTH,height:25,backgroundColor:Color.f5f5f5}}/>
+               <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
+               <TouchableOpacity activeOpacity={1} onPress={this.pushToAppStore}>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="like" size={22} color={'black'} />
+                           <Text style={{marginLeft:10}}>喜欢我们,打分鼓励</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
+                   </View>
+               </TouchableOpacity>
+               <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
+               <TouchableOpacity activeOpacity={1} onPress={this.show}>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="share" size={22} color={'black'} />
+                           <Text style={{marginLeft:10}}>分享给朋友</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
+                   </View>
+               </TouchableOpacity>
+               <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
+               <View style={{width:WIDTH,height:25,backgroundColor:Color.f5f5f5}}/>
+               <PureModalUtil
+                   visible = {this.state.visible}
+                   close = {this.close}
+                   contentView = {this.renderSpinner}/>
            </View>
         );
     }
@@ -111,6 +251,52 @@ const header = {
     justifyContent: 'space-between',
     alignItems:'flex-end'
 }
+const styles = StyleSheet.create({
+    base: {
+        flex: 1
+    },
+    container: {
+        flex: 1,
+        flexDirection: 'column',
+        backgroundColor: '#FFF'
+    },
+    spinner: {
+        width: WIDTH,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.65)'
+    },
+    spinnerContent: {
+        justifyContent: 'center',
+        width: WIDTH,
+        backgroundColor: '#fcfcfc',
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    spinnerTitle: {
+        fontSize: 14,
+        color: '#313131',
+        textAlign: 'center',
+        marginTop: 5
+    },
+    shareParent: {
+        flexDirection: 'row',
+        marginTop: 10,
+        marginBottom: 10
+    },
+    shareContent: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    shareIcon: {
+        width: 40,
+        height: 40
+    },
+});
 
 
 

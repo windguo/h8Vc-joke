@@ -41,6 +41,7 @@ import storageKeys from '../utils/storageKeyValue'
 import * as WeChat from 'react-native-wechat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
+import Ionicon from 'react-native-vector-icons/Ionicons';
 export default class Home extends Component {
     static navigationOptions = {
     };
@@ -61,7 +62,7 @@ export default class Home extends Component {
     }
     componentDidMount() {
         this.refTextArray = [];
-        this.subscription = DeviceEventEmitter.addListener('reloadData', this.refreshing);
+        this.subscription = DeviceEventEmitter.addListener('reloadDataRand', this.refreshing);
         InteractionManager.runAfterInteractions(() => {
             this.loadData();
         });
@@ -273,10 +274,10 @@ export default class Home extends Component {
             .then((responseJson) => {
                 console.log('urlloadDatarespond',responseJson,url);
                 if (responseJson.status === '1') {
-                    this.updateNumMessage = responseJson.updateNum;
-                    if (this.updateNumMessage && this.isNotfirstFetch) {  setTimeout(() => {
-                        this.setState({loadNewData: true})
-                    }, 500)};
+                    // this.updateNumMessage = responseJson.updateNum;
+                    // if (this.updateNumMessage && this.isNotfirstFetch) {  setTimeout(() => {
+                    //     this.setState({loadNewData: true})
+                    // }, 500)};
                     console.log('loadDataResult',responseJson.result);
                     this.flatList && this.flatList.setData(this.dealWithLongArray(responseJson.result), 0);
                    // this.FlatListData = this.dealWithLongArray(responseJson.result);
@@ -292,6 +293,7 @@ export default class Home extends Component {
                     READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
                         if (res && res.length > 0) {
                             this.flatList && this.flatList.setData(res, 0);
+                            this.FlatListData = res;
                         }else{}
                     },(err)=>{
                     });
@@ -310,6 +312,7 @@ export default class Home extends Component {
                 READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
                     if (res && res.length > 0) {
                         this.flatList && this.flatList.setData(res, 0);
+                        this.FlatListData = res;
                     }else{}
                 },(err)=>{
                 });
@@ -483,24 +486,24 @@ export default class Home extends Component {
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{flexDirection: 'row'}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        <Image style={{width: 20, height: 20}} source={item.isCopyed ? require('../assets/copyRed.jpg') : require('../assets/copy.jpg')}/>
+                                        {item.isCopyed ?   <Ionicon name="ios-copy-outline" size={15} color='red'/> : <Ionicon name="ios-copy-outline" size={20} color='#5C5C5C'/>}
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{flexDirection: 'row',marginLeft: 10}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.PostThumb(item,1,index)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isLike ?   <IconSimple name="like" size={15} color='red'/> : <IconSimple name="like" size={15} color='black'/>}
+                                        {item.isLike ?   <IconSimple name="like" size={15} color='red'/> : <IconSimple name="like" size={15} color='#5C5C5C'/>}
                                     </TouchableOpacity>
                                     <Text style={{marginLeft: 5,fontWeight:'100'}}>{item.diggtop && item.diggtop}</Text>
                                 </View>
                                 <View style={{flexDirection: 'row', marginLeft: 10}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.PostThumb(item,0,index)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isUnLike ?   <IconSimple name="dislike" size={15} color='red'/> : <IconSimple name="dislike" size={15} color='black'/>}
+                                        {item.isUnLike ?   <IconSimple name="dislike" size={15} color='red'/> : <IconSimple name="dislike" size={15} color='#5C5C5C'/>}
                                     </TouchableOpacity>
                                     <Text style={{marginLeft: 5,fontWeight:'100'}}>{item.diggbot && item.diggbot}</Text>
                                 </View>
                                 <View style={{flexDirection: 'row', marginLeft: 10}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=> { this.show(item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        <IconSimple name="share" size={15} color='black'/>
+                                        <IconSimple name="share" size={15} color='#5C5C5C'/>
                                     </TouchableOpacity>
                                 </View>
                             </View>

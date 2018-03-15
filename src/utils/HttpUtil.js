@@ -120,7 +120,7 @@ export default class HttpRequest {
                 return false;
             }
             if(err.message.indexOf('JSON') >= 0) {
-                Toast.show(err.message, {
+                Toast.show('请求失败', {
                     duration: Toast.durations.LONG,
                     position: Toast.positions.BOTTOM,
                     shadow: true,
@@ -134,7 +134,7 @@ export default class HttpRequest {
             if (!check) {
                 return false;
             }
-            Toast.show(err.message, {
+            Toast.show('请求失败', {
                 duration: Toast.durations.LONG,
                 position: Toast.positions.BOTTOM,
                 shadow: true,
