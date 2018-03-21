@@ -57,6 +57,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import urlConfig  from  '../../src/utils/urlConfig';
 import storageKeys from '../utils/storageKeyValue';
 var DeviceInfo = require('react-native-device-info');
+import JPushModule from 'jpush-react-native';
 const NativeVersion = DeviceInfo.getVersion();
 export  default  class ScrollTabView extends Component {
     static navigationOptions = {
@@ -142,6 +143,7 @@ export  default  class ScrollTabView extends Component {
 
     }
     componentDidMount() {
+        this.InitJPush();
         this.readUserCache();
         if (Platform.OS === 'android'){
             NativeModules.NativeUtil.StatusBar();
@@ -169,11 +171,70 @@ export  default  class ScrollTabView extends Component {
             this.checkAppUpdateMessage();
             this.setState({renderLoading:true});
         });
+
+
     }
+
+    //这里执行要跳转的页面
+    jumpToOther = ()=>{
+        console.log('JPushModule jump to SecondActivity')
+         this.props.navigation.navigate('Test')
+    }
+
+    InitJPush=()=>{
+        if (Platform.OS === 'android') {
+            JPushModule.initPush();
+            JPushModule.getInfo(map => {
+                this.setState({
+                    appkey: map.myAppKey,
+                    imei: map.myImei,
+                    package: map.myPackageName,
+                    deviceId: map.myDeviceId,
+                    version: map.myVersion
+                })
+            })
+            JPushModule.notifyJSDidLoad(resultCode => {
+                if (resultCode === 0) {
+                }
+            })
+        }
+
+        if (Platform.OS === 'ios') {
+            JPushModule.setupPush()
+        }
+
+        JPushModule.addReceiveCustomMsgListener(map => {
+            console.log('JPushModule CustomMsgextras: ' + map.extras)
+            console.log('JPushModule CustomMsg',map.toString());
+        })
+
+        JPushModule.addReceiveNotificationListener(map => {
+            console.log('JPushModule Notification alertContent: ' + map.alertContent)
+            console.log('JPushModule Notification extras: ' + map.extras)
+            var extra = JSON.parse(map.extras);
+            console.log("JPushModule Notification",extra.key + ": " + extra.value);
+        })
+
+        //点击回调这个函数
+        JPushModule.addReceiveOpenNotificationListener(map => {
+            console.log('JPushModule Openingnotification!')
+            console.log('JPushModule map.extra: ' + map.extras)
+            this.jumpToOther()
+            // JPushModule.jumpToPushActivity("SecondActivity");
+        })
+
+        JPushModule.addGetRegistrationIdListener(registrationId => {
+            console.log('JPushModule Device register succeed, registrationId ' + registrationId)
+        })
+    }
+
     componentWillUnmount() {
         //删除状态改变事件监听
         AppState.removeEventListener('change');
         NetInfo.removeEventListener('connectionChange');
+        JPushModule.removeReceiveCustomMsgListener();
+        JPushModule.removeReceiveNotificationListener();
+        JPushModule.clearAllNotifications()
 
     }
     handleAppStateChange = (appState) => {

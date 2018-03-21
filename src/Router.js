@@ -13,6 +13,8 @@ import {
     DeviceEventEmitter,
     Image,
 } from 'react-native';
+
+
 import {StackNavigator,TabNavigator} from 'react-navigation';
 import Detail from '../src/pages/Detail';
 import web from '../src/pages/web';
@@ -23,6 +25,7 @@ import Me from './pages/Me';
 import Tab from '../src/components/Tab'
 import Login from  '../src/pages/Login'
 import MyCollectLaugh from '../src/pages/MyCollectLaugh'
+import Test from "./pages/test";
 const tabbaroption = {
     activeTintColor: 'red',
     inactiveTintColor: '#999999',
@@ -103,9 +106,11 @@ const NavgationApp = StackNavigator({
     Detail: {screen: Detail},
     Web: {screen: web},
     Login: {screen: Login},
-    MyCollectLaugh: {screen: MyCollectLaugh}
+    MyCollectLaugh: {screen: MyCollectLaugh},
+    Test:{screen:Test}
 }, {initialRouteName: 'Index'});
 export default class Router extends React.Component {
+
     render() {
         return <NavgationApp/>;
     }
