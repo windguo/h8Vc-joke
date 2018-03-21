@@ -37,6 +37,13 @@
      <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
         </intent-filter>
       </activity>
+    <meta-data
+        android:name="JPUSH_APPKEY"
+        android:value="${JPUSH_APPKEY}" />
+    <meta-data
+        android:name="JPUSH_CHANNEL"
+        android:value="${APP_CHANNEL}" />
+
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
         <activity android:name=".wxapi.WXEntryActivity" android:label="@string/app_name" android:exported="true"/>
         <meta-data android:value="5a8e2525a40fa35695000287" android:name="UMENG_APPKEY"/>
