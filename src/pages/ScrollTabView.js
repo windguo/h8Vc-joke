@@ -395,9 +395,9 @@ export  default  class ScrollTabView extends Component {
         return <View style={styles.modalViewStyle}>
             <View style={styles.hudViewStyle}>
                 <View>
-                    <Text style={{fontSize: 16, marginTop: 20}}>更新提示</Text>
+                    <Text style={{fontSize: 16, marginTop: 20,textAlign:'center'}}>更新提示</Text>
                 </View>
-                <ScrollView style={{marginVertical: 10}} showsVerticalScrollIndicator={false}>
+                <ScrollView style={{marginVertical: 10,paddingHorizontal:15}} showsVerticalScrollIndicator={false}>
                     <Text style={{fontSize: 14}}>{this.updateConfig.message}</Text>
                 </ScrollView>
                 {this.updateConfig.android.flag ?
@@ -437,9 +437,9 @@ export  default  class ScrollTabView extends Component {
         return <View style={styles.modalViewStyle}>
             <View style={styles.hudViewStyle}>
                 <View>
-                    <Text style={{fontSize: 16, marginTop: 20}}>更新提示</Text>
+                    <Text style={{fontSize: 16, marginTop: 20,textAlign:'center'}}>更新提示</Text>
                 </View>
-                <ScrollView style={{marginVertical: 10}} showsVerticalScrollIndicator={false}>
+                <ScrollView style={{marginVertical: 10,paddingHorizontal:15}} showsVerticalScrollIndicator={false}>
                     <Text style={{fontSize: 14}}>{this.updateConfig.message}</Text>
                 </ScrollView>
                 {this.updateConfig.ios.flag ?
@@ -551,9 +551,8 @@ const styles = StyleSheet.create({
     },
     hudViewStyle: {
         width:250,
-        height:300,
+        maxHeight:300,
         backgroundColor:'white',
-        alignItems:'center',
         justifyContent:'space-between',
         borderRadius:10
     },
