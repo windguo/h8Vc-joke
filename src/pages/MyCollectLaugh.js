@@ -1,3 +1,4 @@
+
 /**
  * Created by zhangzuohua on 2018/1/22.
  */
@@ -42,8 +43,28 @@ import * as WeChat from 'react-native-wechat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-export default class Home extends Component {
+import { ifIphoneX } from '../utils/iphoneX';
+export default class MyCollectLaugh extends Component {
     static navigationOptions = {
+        header:({navigation}) =>{
+            return (
+                <ImageBackground style={{...header}} source={require('../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                    <TouchableOpacity activeOpacity={1} onPress={() => {
+                        navigation.goBack(null);
+                    }}>
+                        <View style={{justifyContent:'center',marginLeft:10,alignItems:'center',height:43.7}}>
+                            <IconSimple name="arrow-left" size={20} color='white'/>
+                        </View>
+                    </TouchableOpacity>
+                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'bold',lineHeight:43.7,color:'white'}}>我发布的内容</Text>
+                    <TouchableOpacity activeOpacity={1} onPress={() => {
+                    }}>
+                        <View style={{justifyContent:'center',marginRight:10,alignItems:'center',height:43.7,backgroundColor:'transparent',width:20}}>
+                        </View>
+                    </TouchableOpacity>
+                </ImageBackground>
+            )
+        }
     };
     constructor(props) {
         super(props);
@@ -58,19 +79,16 @@ export default class Home extends Component {
         this.requestPageNumber = 1;
     }
     componentWillMount() {
-     this._ViewHeight = new Animated.Value(0);
+        this._ViewHeight = new Animated.Value(0);
     }
     componentDidMount() {
-        this.refTextArray = [];
-        this.subscription = DeviceEventEmitter.addListener('reloadDataRand', this.refreshing);
         InteractionManager.runAfterInteractions(() => {
             this.loadData();
         });
     }
     componentWillUnmount() {
-        this.subscription.remove();
     }
-     setClipboardContent = (text,index,item) => {
+    setClipboardContent = (text,index,item) => {
         try {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
@@ -85,11 +103,16 @@ export default class Home extends Component {
                 hideOnPress: true,
                 delay: 0,
             });
-        }catch (e){this.ToastShow(e.message)}
+        }catch (e){}
     }
 
     share = async()=>{
+        //    alert(JSON.stringify(this._shareItem));
         let data = await NativeModules.NativeUtil.showDialog();
+        if (data.wechat === 3){
+            this.clickToReport();
+            return;
+        }
         if(data){
             WeChat.isWXAppInstalled().then((isInstalled) => {
                 if (isInstalled) {
@@ -105,7 +128,7 @@ export default class Home extends Component {
                                 Toast.show(error.message);
                             }
                         });
-                    } else{
+                    } else if(data.wechat === 2){
                         WeChat.shareToTimeline({
                             title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
@@ -135,27 +158,15 @@ export default class Home extends Component {
         WeChat.isWXAppInstalled().then((isInstalled) => {
             if (isInstalled) {
                 if (type === 'Session') {
-                        WeChat.shareToSession({
-                            title: "【哈吧笑话分享】",
-                            description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                            type: 'news',
-                            webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
-                        }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
-                            Toast.show(error.message);
-                        }});
-                    // WeChat.shareToSession({
-                    //     title: "【哈吧笑话分享】",
-                    //     description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                    //     type: 'news',
-                    //     webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                    //     thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
-                    // }).catch((error) => {
-                    //     if (error.message != -2) {
-                    //         Toast.show(error.message);
-                    //     }
-                    // });
-
+                    WeChat.shareToSession({
+                        title: "【哈吧笑话分享】",
+                        description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
+                        type: 'news',
+                        webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
+                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                    }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
+                        Toast.show(error.message);
+                    }});
                 } else {
                     WeChat.shareToTimeline({
                         title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
@@ -250,54 +261,30 @@ export default class Home extends Component {
         });
     };
     dealWithrequestPage = () =>{
-      return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
+        return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
     }
     loadData = (resolve) => {
-        let url = '';
-        if (!this.props.data) {
-            return;
-        }
-        switch (this.props.data.classid) {
-            case '0':
-               // url = urlConfig.baseURL + urlConfig.newList;
-                url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
-                break;
-            // case '1':
-            //    // url =  this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.randomList  : urlConfig.baseURL + urlConfig.randomList;
-            //     url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid;
-            //     break;
-            default:
-                url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
-        }
+        let url = urlConfig.MyCollectLaugh + '&userid=' + GLOBAL.userInfo.userid;
         _fetch(fetch(url),30000)
             .then((response) =>  response.json())
             .then((responseJson) => {
                 console.log('urlloadDatarespond',responseJson,url);
                 if (responseJson.status === '1') {
-                    // this.updateNumMessage = responseJson.updateNum;
-                    // if (this.updateNumMessage && this.isNotfirstFetch) {  setTimeout(() => {
-                    //     this.setState({loadNewData: true})
-                    // }, 500)};
-                    console.log('loadDataResult',responseJson.result);
+                    console.log('myCollectList',responseJson.result);
                     this.flatList && this.flatList.setData(this.dealWithLongArray(responseJson.result), 0);
-                   // this.FlatListData = this.dealWithLongArray(responseJson.result);
                     console.log('loadDataFlatListData',this.FlatListData);
                     resolve &&  resolve();
-                    WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index,responseJson.result);
-                    setTimeout(() => {
-                        this.setState({loadNewData: false})
-                    }, 1500)
+                    WRITE_CACHE(storageKeys.MyCollectList,responseJson.result);
                     //要求除了最新外其他页面非第一次接口请求都要加上&num
                     if (this.props.index !== 0){ this.isNotfirstFetch = true};
                 }else{
-                    READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
+                    READ_CACHE(storageKeys.MyCollectList,(res)=>{
                         if (res && res.length > 0) {
                             this.flatList && this.flatList.setData(res, 0);
                             this.FlatListData = res;
                         }else{}
                     },(err)=>{
                     });
-
                     Toast.show(responseJson.message, {
                         duration: Toast.durations.SHORT,
                         position: Toast.positions.CENTER,
@@ -309,7 +296,7 @@ export default class Home extends Component {
                 }
             })
             .catch((error) => {
-                READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
+                READ_CACHE(storageKeys.MyCollectList,(res)=>{
                     if (res && res.length > 0) {
                         this.flatList && this.flatList.setData(res, 0);
                         this.FlatListData = res;
@@ -327,7 +314,7 @@ export default class Home extends Component {
                     });
                     return ;
                 }
-                Toast.show(error.message, {
+                Toast.show('网络错误', {
                     duration: Toast.durations.SHORT,
                     position: Toast.positions.CENTER,
                     shadow: true,
@@ -338,15 +325,13 @@ export default class Home extends Component {
             });
     }
     dealWithLongArray = (dataArray) => {
-       // let waitDealArray = this.state.data.concat(dataArray);
         //下拉刷新来几条数据，就对应的删除几条数据 ，以便填充
         let initArray = [];
-        // console.log('789', sbArray);
         if (this.FlatListData){
             if (this.FlatListData.length > dataArray.length ){
-               initArray = this.FlatListData.slice(dataArray.length,this.FlatListData.length);
+                initArray = this.FlatListData.slice(dataArray.length,this.FlatListData.length);
             }else{
-                 initArray = [];
+                initArray = [];
             }
         }
         let waitDealArray = dataArray.concat(initArray).filter((value)=>{return !(!value || value === "");});
@@ -354,7 +339,7 @@ export default class Home extends Component {
             waitDealArray = waitDealArray.slice(0, 50);
             console.log('处理过的array', waitDealArray);
         }
-         this.FlatListData = waitDealArray;
+        this.FlatListData = waitDealArray;
         return waitDealArray;
     }
     dealWithLoadMoreData = (dataArray) => {
@@ -369,17 +354,6 @@ export default class Home extends Component {
         this.FlatListData = waitDealArray;
         return waitDealArray;
     }
-    refreshing = () => {
-        if (this.props.index === global.activeTab){
-            this.flatList.scrollToOffset({ offset: 0, animated: true });
-            this.flatList.BeginRefresh();
-            //this.loadData()
-           // setTimeout(this.flatList.StopRefresh,1000);
-         //   this.flatList.StopRefresh();
-            //this.flatList.scrollToIndex({animated: true,index :2});
-           // this.setState({refreshing: true});
-        }
-    }
     ToastShow = (message) => {
         Toast.show(message, {
             duration: Toast.durations.SHORT,
@@ -392,7 +366,7 @@ export default class Home extends Component {
     }
     PostThumb = (item,dotop,index) => {
         //diggtop   //diggbot
-      //  {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩 传1是赞}
+        //  {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩 传1是赞}
         try {
             let upDownData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             if (dotop === 0) {
@@ -439,23 +413,14 @@ export default class Home extends Component {
                 this.ToastShow('失败');
                 throw error;
             });
-        }catch (e){ this.ToastShow(e.message);}
+        }catch (e){}
 
     }
-  //ref={(c) => {this.refTextArray.push(c)}}
-//<Text style={{color: '#D3D3D3', marginLeft: 10}}>{formatData(item.newstime)}</Text>
-   // item.smalltext && item.smalltext.replace(/\s+/g, "")
     _renderItem = ({item, index}) => {
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
-                {/*this.refTextArray[index].setNativeProps({*/}
-                    {/*style: {color: '#D3D3D3'}*/}
-                {/*});*/}
-               // this.props.navigation.navigate('Detail', {data: this.state.data[index]});
-               // /^\r+|\n+$/g
-               // .replace(/^(\r\n)|(\n)|(\r)$/g,"")
-
             }}>
+
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
                     <View style={{backgroundColor: 'white',paddingHorizontal:15,paddingTop:15}}>
@@ -473,16 +438,7 @@ export default class Home extends Component {
                                 justifyContent: 'space-between',
                             }}>
                             <View style={{flexDirection: 'row'}}>
-                                {(this.props.data.classid === '0' || this.props.data.classid === '1') ? <View style={{flexDirection: 'row'}}><Text style={{
-                                    paddingHorizontal: 6,
-                                    paddingVertical: 2,
-                                    borderWidth: 1,
-                                    borderRadius: 10,
-                                    fontWeight:'100',
-                                    borderColor:'#eee'
-                                }} onPress={() => {
-                                    this.props.pageNumber(parseInt(item.classid))
-                                }}>{item.classname && item.classname}</Text><Text style={{marginLeft:10,paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View> : <View><Text style={{paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View>}</View>
+                                <View style={{flexDirection: 'row'}}><Text style={{paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View></View>
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{flexDirection: 'row'}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
@@ -515,46 +471,19 @@ export default class Home extends Component {
             </TouchableOpacity>
         )
     }
-
-// <PullList
-// type = "wait"
-// style={{height:HEIGHT-SCALE(94)}}
-// ref={(list)=> this.ultimateListView = list}
-// onPullRelease={this.onPullRelease}
-// onEndReached={this.loadMore}
-// renderItem={this.renderRowView}
-// numColumns={1}
-// initialNumToRender={5}
-// key={'list'}
-// />
     onPullRelease = async (resolve) => {
         this.loadData(resolve);
     };
     loadMore = async()=>{
-        // if (this.props.index !== 1) {
-        //     return;
-        // }
-
-        let url = '';
         this.requestPageNumber += 1;
-        if (!this.props.data) {
-            return;
-        }
-        switch (this.props.data.classid) {
-            case '0':
-                url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid + this.dealWithrequestPage();
-                break;
-            default:
-                url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid +  this.dealWithrequestPage():urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid+ this.dealWithrequestPage();
-
-        }
+        let url = urlConfig.MyCollectLaugh  + '&userid=' + GLOBAL.userInfo.userid + this.dealWithrequestPage();
         _fetch(fetch(url),30000)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log('XXXloadMore',responseJson,url);
                 if (responseJson.status === '1') {
                     this.flatList && this.flatList.setData(this.dealWithLoadMoreData(responseJson.result));
-                  //  this.FlatListData = this.dealWithLoadMoreData(responseJson.result);
+                   // this.flatList && this.flatList.addData(responseJson.result);
                 }else{
                     Toast.show(responseJson.message, {
                         duration: Toast.durations.SHORT,
@@ -578,7 +507,7 @@ export default class Home extends Component {
                     });
                     return ;
                 }
-                Toast.show(error.message, {
+                Toast.show('网络错误', {
                     duration: Toast.durations.SHORT,
                     position: Toast.positions.CENTER,
                     shadow: true,
@@ -589,35 +518,12 @@ export default class Home extends Component {
             });
 
     };
-//     //   <PullList
-//     //  data={this.state.data}
-//     keyExtractor={this._keyExtractor}
-// onPullRelease={this.onPullRelease}
-// renderItem={this._renderItem}
-// onEndReached={this.loadMore}
-// style={{backgroundColor: 'white'}}
-// ref={(c) => {this.flatList = c}}
-// ifRenderFooter={this.props.index !== 1 ? false : true}
-// {this.state.loadNewData ? <View style={{
-//     height: 40,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: '#C9E4F7',
-//     position:'absolute',
-//     left:0,
-//     right:0,
-//     top:0
-// }}>
-// <Text style={{color: '#4884BE'}}>{this.updateNumMessage}</Text>
-// </View> : <View/>}
-//
-// />
     _keyExtractor = (item, index) => index;
     render() {
         return (
             <View style={{flex: 1}} >
                 <PullList
-                  //  data={this.state.data}
+                    //  data={this.state.data}
                     keyExtractor={this._keyExtractor}
                     onPullRelease={this.onPullRelease}
                     renderItem={this._renderItem}
@@ -680,3 +586,16 @@ const styles = StyleSheet.create({
         height: 40
     }
 });
+const header = {
+    backgroundColor: '#C7272F',
+    ...ifIphoneX({
+        paddingTop: 44,
+        height: 88
+    }, {
+        paddingTop: Platform.OS === "ios" ? 20 : SCALE(StatusBarHeight()),
+        height:64,
+    }),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems:'flex-end'
+}

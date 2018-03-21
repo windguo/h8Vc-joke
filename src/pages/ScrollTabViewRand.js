@@ -95,18 +95,6 @@ export  default  class ScrollTabView extends Component {
         };
 
     }
-    readCache = () => {
-        READ_CACHE("GesPWD", (res) => {
-            if (res && res.length > 0) {
-            } else {
-            }
-
-        }, (err) => {
-        });
-
-        WRITE_CACHE("USERPWD", {loginStatus: true}, null);
-    }
-
     CodePushSync = () => {
         codePush.sync(
             {

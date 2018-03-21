@@ -7,5 +7,7 @@ const storageKeys = {
         sectionList: 'sectionList',
         //homeList数据缓存 后面要加上page
         homeList:'homeList',
+        userInfo:'userInfo',
+        MyCollectList:'MyCollectList',
     }
 export  default  storageKeys;

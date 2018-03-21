@@ -3,11 +3,11 @@
  */
 export default urlConfig = {
   //  baseURL: 'http://jianjie.92kaifa.com',
-    baseURL: 'http://h8.vc',
+    baseURL: 'http://www.jianjie8.com',
     //举报URL
-    ReportURL: 'http://m.h8.vc/report',
-    agreementURL: 'http://m.h8.vc/agreement',
-    suggestURL:"http://h8.vc/e/tool/feedback/?bid=1",
+    ReportURL: 'http://m.jianjie8.com/report',
+    agreementURL: 'http://m.jianjie8.com/agreement',
+    suggestURL:"http://www.jianjie8.com/e/tool/feedback/?bid=1",
     //最新更新
    //  newList: '/e/api/?getJson=new',
    // // 随机穿越
@@ -24,11 +24,16 @@ export default urlConfig = {
 //随机
     sectionListDataRand:'/e/api/list/rand.php?getJson=column',
     //发布地址
-    pubLishUrl:'http://m.h8.vc/fromapp',
+    pubLishUrl:'http://m.jianjie8.com/fromapp',
     //点赞或者踩 {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩踩 传1是赞}
     thumbUpUrl:'/e/public/digg/post/index.php',
     thumbDownUrl:'/e/public/digg/post/diggbot.php',
+    LoginUrl: 'http://www.jianjie8.com/e/member/doaction.php',
+    MyCollectLaugh: 'http://www.jianjie8.com/e/api/member/info.php?getJson=article',
+    //更新检测地址
+    CheckUpdate:"http://www.jianjie8.com/e/api/?getJson=version",
+
 }
-//http://h8.vc/e/api/?getJson=
+//http://www.jianjie8.com/e/api/?getJson=
 //这个域名是复制文本添加的域名
 //m.jianjie8.com

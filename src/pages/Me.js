@@ -47,6 +47,8 @@ import Feather from 'react-native-vector-icons/Feather';
 import urlConfig  from  '../../src/utils/urlConfig';
 import PureModalUtil from '../utils/PureModalUtil';
 import * as WeChat from 'react-native-wechat';
+import storageKeys from '../utils/storageKeyValue'
+import ScrollTabView from "./ScrollTabView";
 export  default  class Me extends Component {
     static navigationOptions = {
         tabBarLabel: '我的',
@@ -67,11 +69,19 @@ export  default  class Me extends Component {
         super(props);
         this.state = {
             visible:false,
-            ViewHeight:new Animated.Value(0)
+            ViewHeight:new Animated.Value(0),
+            username:'',
+            userpwd:'',
+            userName:null,
         };
     }
     componentWillMount() {
         this._ViewHeight = new Animated.Value(0);
+    }
+    componentDidMount() {
+        setTimeout( ()=> {GLOBAL.userInfo &&  this.setState({username:GLOBAL.userInfo.username})},500);
+       // GLOBAL.userInfo &&  this.setState({username:GLOBAL.userInfo.username});
+       // alert(JSON.stringify(GLOBAL.userInfo));
     }
 
     pushToWeb = (params) => {
@@ -100,7 +110,7 @@ export  default  class Me extends Component {
                         description: '海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？',
                         type: 'news',
                         webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc',
-                        thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png',
+                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png',
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
                         Toast.show(error.message);
                     }});
@@ -110,7 +120,7 @@ export  default  class Me extends Component {
                         description: "海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？",
                         type: 'news',
                         webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc' ,
-                        thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png',
+                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png',
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
@@ -181,28 +191,69 @@ export  default  class Me extends Component {
             visible:false
         });
     };
+    callBack = (username) => {
+        this.setState({username:username});
+    }
+    clickToLogin = () => {
+        if (this.state.username){
+            return ;
+        }
+        this.props.navigation.navigate('Login', {callBack:this.callBack});
+    }
+    clickToMyLaugh = ()=>{
+        if (!this.state.username){
+            alert('请登录');
+            return ;
+        }
+        this.props.navigation.navigate('MyCollectLaugh');
+    }
+    quit = () => {
+        REMOVE_ITEM(storageKeys.userInfo);
+        this.setState({username:null});
+    }
     render() {
         return (
-           <View style={{flex:1,backgroundColor:Color.f5f5f5}}>
+           <ScrollView style={{flex:1,backgroundColor:Color.f5f5f5}}>
                <View style={{width:WIDTH,height:25,backgroundColor:Color.f5f5f5}}/>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
+               <TouchableOpacity activeOpacity={1} onPress={this.clickToLogin}>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="user" size={22} color={Color.FontColor} />
+                           <Text style={{marginLeft:10}}>{this.state.username ? this.state.username : '登录'}</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
+                   </View>
+               </TouchableOpacity>
+               <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
+               {this.state.username ?
+               <TouchableOpacity activeOpacity={1} onPress={this.clickToMyLaugh}>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="wallet" size={22} color={Color.FontColor} />
+                           <Text style={{marginLeft:10}}>我发布的内容</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
+                   </View>
+               </TouchableOpacity> : <View/>}
+               <View style={{width:WIDTH,height:25,backgroundColor:Color.f5f5f5}}/>
                <TouchableOpacity activeOpacity={1} onPress={()=>{this.pushToWeb('yjfk')}}>
                    <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
                        <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
-                           <IconSimple name="question" size={22} color={'black'} />
+                           <IconSimple name="question" size={22} color={Color.FontColor} />
                            <Text style={{marginLeft:10}}>意见反馈</Text>
                        </View>
-                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
                    </View>
                </TouchableOpacity>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
                <TouchableOpacity activeOpacity={1} onPress={()=>{this.pushToWeb('yhsyxy')}}>
                    <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
                        <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
-                           <IconSimple name="doc" size={22} color={'black'} />
+                           <IconSimple name="doc" size={22} color={Color.FontColor} />
                            <Text style={{marginLeft:10}}>用户使用协议</Text>
                        </View>
-                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
                    </View>
                </TouchableOpacity>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
@@ -211,29 +262,38 @@ export  default  class Me extends Component {
                <TouchableOpacity activeOpacity={1} onPress={this.pushToAppStore}>
                    <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
                        <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
-                           <IconSimple name="like" size={22} color={'black'} />
+                           <IconSimple name="like" size={22} color={Color.FontColor} />
                            <Text style={{marginLeft:10}}>喜欢我们,打分鼓励</Text>
                        </View>
-                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
                    </View>
                </TouchableOpacity>
                <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
                <TouchableOpacity activeOpacity={1} onPress={this.show}>
                    <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
                        <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
-                           <IconSimple name="share" size={22} color={'black'} />
+                           <IconSimple name="share" size={22} color={Color.FontColor} />
                            <Text style={{marginLeft:10}}>分享给朋友</Text>
                        </View>
-                       <IconSimple name="arrow-right" size={18} color={'black'} style={{marginRight:20}}/>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
                    </View>
                </TouchableOpacity>
-               <View style={{height:1,backgroundColor:'#F0F0F0'}}></View>
                <View style={{width:WIDTH,height:25,backgroundColor:Color.f5f5f5}}/>
+               {this.state.username ?
+               <TouchableOpacity activeOpacity={1} onPress={this.quit}>
+                   <View style={{flexDirection:'row',alignItems:'center',height:50,backgroundColor:'white',justifyContent:'space-between'}}>
+                       <View style={{marginLeft:20,flexDirection:'row',alignItems:'center'}}>
+                           <IconSimple name="logout" size={22} color={Color.FontColor} />
+                           <Text style={{marginLeft:10}}>退出登录</Text>
+                       </View>
+                       <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{marginRight:20}}/>
+                   </View>
+               </TouchableOpacity> : <View/>}
                <PureModalUtil
                    visible = {this.state.visible}
                    close = {this.close}
                    contentView = {this.renderSpinner}/>
-           </View>
+           </ScrollView>
         );
     }
 

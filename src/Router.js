@@ -21,6 +21,8 @@ import ScrollTabView from './pages/ScrollTabView';
 import ScrollTabViewRand from './pages/ScrollTabViewRand';
 import Me from './pages/Me';
 import Tab from '../src/components/Tab'
+import Login from  '../src/pages/Login'
+import MyCollectLaugh from '../src/pages/MyCollectLaugh'
 const tabbaroption = {
     activeTintColor: 'red',
     inactiveTintColor: '#999999',
@@ -99,7 +101,9 @@ const NavgationApp = StackNavigator({
     Home: {screen: Home},
     Index: {screen: TabNavigaApp},
     Detail: {screen: Detail},
-    Web: {screen: web}
+    Web: {screen: web},
+    Login: {screen: Login},
+    MyCollectLaugh: {screen: MyCollectLaugh}
 }, {initialRouteName: 'Index'});
 export default class Router extends React.Component {
     render() {

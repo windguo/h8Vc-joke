@@ -33,7 +33,8 @@ import {
     ImageBackground,
     FlatList,
     AppState,
-    NetInfo
+    NetInfo,
+    Modal
 } from 'react-native';
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view';
 import LoadingSpinner from '../components/pull/LoadingSpinner';
@@ -43,7 +44,6 @@ const HEIGHT = Dimensions.get('window').height;
 import {ifIphoneX} from '../utils/iphoneX';
 import _fetch from  '../utils/_fetch'
 import Home from './Home';
-import storageKeys from '../utils/storageKeyValue'
 import codePush from 'react-native-code-push'
 import SplashScreen from 'react-native-splash-screen'
 import RNFetchBlob from 'react-native-fetch-blob'
@@ -55,7 +55,9 @@ import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import urlConfig  from  '../../src/utils/urlConfig';
-//<View style={{...header}}>
+import storageKeys from '../utils/storageKeyValue';
+var DeviceInfo = require('react-native-device-info');
+const NativeVersion = DeviceInfo.getVersion();
 export  default  class ScrollTabView extends Component {
     static navigationOptions = {
         tabBarLabel: '最新',
@@ -92,21 +94,23 @@ export  default  class ScrollTabView extends Component {
             page: 0,
             renderLoading:false,
             renderError:false,
+            showModal:false,
         };
 
     }
-    readCache = () => {
-        READ_CACHE("GesPWD", (res) => {
-            if (res && res.length > 0) {
+    readUserCache = () => {
+        READ_CACHE(storageKeys.userInfo, (res) => {
+            if (res && res.userid) {
+                GLOBAL.userInfo = res
+                console.log('userInfo',res);
             } else {
+                console.log('获取用户信息失败');
             }
-
         }, (err) => {
+            console.log('获取用户信息失败');
         });
 
-        WRITE_CACHE("USERPWD", {loginStatus: true}, null);
     }
-
     CodePushSync = () => {
         codePush.sync(
             {
@@ -127,12 +131,18 @@ export  default  class ScrollTabView extends Component {
         );
     }
     componentWillMount() {
+        this.updateConfig = {
+            ios:{isForce:false,downloadUrl:''},
+            android:{isForce:false,downloadUrl:''},
+            message:''
+        },
         //监听状态改变事件
         AppState.addEventListener('change', this.handleAppStateChange);
         NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
 
     }
     componentDidMount() {
+        this.readUserCache();
         if (Platform.OS === 'android'){
             NativeModules.NativeUtil.StatusBar();
         }
@@ -156,6 +166,7 @@ export  default  class ScrollTabView extends Component {
         });
         InteractionManager.runAfterInteractions(() => {
             this.loadData();
+            this.checkAppUpdateMessage();
             this.setState({renderLoading:true});
         });
     }
@@ -174,7 +185,6 @@ export  default  class ScrollTabView extends Component {
     }
     handleConnectivityChange = (status) =>{
         console.log('status change:' , status);
-
         if (status.type !== 'none'){
             this.loadData();
             this.setState({renderLoading:true});
@@ -211,8 +221,91 @@ export  default  class ScrollTabView extends Component {
                 break;
         }
     }
+   clickDownload = ()=> {
+        let url = '';
+        if (Platform.OS === 'ios'){
+            url = this.updateConfig.ios.downloadUrl;
+            // if (!this.updateConfig.ios.flag){
+            //     this.setState({showModal:false});
+            // }
+        }else{
+            url = this.updateConfig.android.downloadUrl;
+            // if (!this.updateConfig.android.flag){
+            //     this.setState({showModal:false});
+            // }
+        }
+       Linking.openURL(url)
+           .catch((err)=>{
+               console.log('An error occurred', err);
+           });
+   }
+   clickToCancelModal = () => {
+        this.setState({showModal:false})
+   }
+    compareVersionNumber = (ServerPram,LocalPram) => {
+        let v1g = ServerPram.split(".");
+        let v2g = LocalPram.split(".");
+        let flag = false;
+        for (var i=0;i<3;i++) {
+            if (parseInt(v1g[i]) > parseInt(v2g[i]))  {
+                flag = true;
+                break;
+            }
+        }
+        return flag;
+    }
+    checkAppUpdateMessage = () => {
+        let url = urlConfig.CheckUpdate;
+        RNFetchBlob.config({fileCache: true, ...baseConfig.BaseTimeOut}).fetch('GET', url, {
+            ...baseConfig.BaseHeaders,
+        }).then((res) => res.json()).then((responseJson) => {
+            if (responseJson.status !== '1'){
+                Toast.show(responseJson.message, {
+                    duration: Toast.durations.LONG,
+                    position: Toast.positions.BOTTOM,
+                    shadow: true,
+                    animation: true,
+                    hideOnPress: false,
+                    delay: 0
+                });
+                return ;
+            }
+            console.log('checkUpdate',responseJson);
+         try {
+             let [message, android, ios] = responseJson.result;
+             console.log('xxxxx',message,android,ios);
+             if (Platform.OS === 'android') {
+                 let compRes = this.compareVersionNumber(android.android, NativeVersion);
+                 this.updateConfig.android = android;
+                 this.updateConfig.message = message.updateInfo;
+                 if (compRes){
+                     this.setState({showModal:true});
+                 }
+             } else if (Platform.OS === 'ios') {
+                 let compRes = this.compareVersionNumber(ios.ios, NativeVersion);
+                 this.updateConfig.ios = ios;
+                 this.updateConfig.message = message.updateInfo;
+                 if (compRes){
+                     this.setState({showModal:true});
+                 }
+             } else {
+             }
+         }catch (err){}
+        }).catch((err) => {
+            Toast.show('网络错误', {
+                duration: Toast.durations.LONG,
+                position: Toast.positions.BOTTOM,
+                shadow: true,
+                animation: true,
+                hideOnPress: false,
+                delay: 0
+            });
+        })
+    }
+
     loadData = () => {
         let url = urlConfig.baseURL + urlConfig.sectionList;
+        console.log('sectionList',url);
         RNFetchBlob.config({fileCache: true, ...baseConfig.BaseTimeOut}).fetch('GET', url, {
             ...baseConfig.BaseHeaders,
         }).then((res) => res.json()).then((responseJson) => {
@@ -271,7 +364,6 @@ export  default  class ScrollTabView extends Component {
             })
             this.setState({page: page});
         }
-
         renderContent = (sectionList) => {
             let list = [];
             list.push(sectionList.map((data, index) => {
@@ -281,14 +373,14 @@ export  default  class ScrollTabView extends Component {
             }));
             return list;
         }
-    _renderError = ()=>{
+    _renderError = (params)=>{
         return (
             <View style={[styles.contain,{justifyContent:'center',alignItems:'center'}]}>
                 {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
                 <TouchableOpacity onPress={()=>this.loadData()}>
                     <View style={{justifyContent:'center', alignItems:'center'}}>
                         <Image style={{width:SCALE(323),height:SCALE(271)}} source={require('../assets/nonetwork.png')}/>
-                        <Text style={{fontSize:FONT(15),color:Color.C666666}}>网络无法连接，点击屏幕重试</Text>
+                        <Text style={{fontSize:FONT(15),color:Color.C666666}}>{params ? params : '网络无法连接，点击屏幕重试'}</Text>
                     </View>
                 </TouchableOpacity>
             </View>)
@@ -298,20 +390,119 @@ export  default  class ScrollTabView extends Component {
             {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
             <LoadingSpinner type="normal"/></View>)
     };
+     renderModal = ()=> {
+    if (Platform.OS === 'android'){
+        return <View style={styles.modalViewStyle}>
+            <View style={styles.hudViewStyle}>
+                <View>
+                    <Text style={{fontSize: 16, marginTop: 20}}>更新提示</Text>
+                </View>
+                <ScrollView style={{marginVertical: 10}} showsVerticalScrollIndicator={false}>
+                    <Text style={{fontSize: 14}}>{this.updateConfig.message}</Text>
+                </ScrollView>
+                {this.updateConfig.android.flag ?
+                    <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                        <View style={{flexDirection: 'row'}}><View style={{
+                            borderTopWidth: 1,
+                            borderColor: '#eeeeee',
+                            height: 30,
+                            width: 250,
+                            justifyContent: 'center'
+                        }}>
+                            <Text style={{fontSize: 16, color: 'red', textAlign: 'center'}}>下载</Text>
+                        </View></View></TouchableOpacity> :  <View style={{flexDirection: 'row'}}>
+                        <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                            <View style={{
+                                borderTopWidth: 1,
+                                borderColor: '#eeeeee',
+                                height: 30,
+                                width: 125,
+                                justifyContent: 'center'
+                            }}>
+                                <Text style={{fontSize: 16, color: 'red', textAlign: 'center'}}>下载</Text>
+                            </View></TouchableOpacity>
+                        <TouchableOpacity activeOpacity={1} onPress={this.clickToCancelModal}><View style={{
+                            borderTopWidth: 1,
+                            borderLeftWidth: 1,
+                            height: 30,
+                            width: 125,
+                            borderColor: '#eeeeee',
+                            justifyContent: 'center'
+                        }}>
+                            <Text style={{fontSize: 16, color: '#5c5c5c', textAlign: 'center'}}>取消</Text>
+                        </View></TouchableOpacity></View>}
+            </View>
+        </View>;
+    }else if(Platform.OS === 'ios'){
+        return <View style={styles.modalViewStyle}>
+            <View style={styles.hudViewStyle}>
+                <View>
+                    <Text style={{fontSize: 16, marginTop: 20}}>更新提示</Text>
+                </View>
+                <ScrollView style={{marginVertical: 10}} showsVerticalScrollIndicator={false}>
+                    <Text style={{fontSize: 14}}>{this.updateConfig.message}</Text>
+                </ScrollView>
+                {this.updateConfig.ios.flag ?
+                    <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                    <View style={{flexDirection: 'row'}}><View style={{
+                        borderTopWidth: 1,
+                        borderColor: '#eeeeee',
+                        height: 50,
+                        width: 250,
+                        justifyContent: 'center'
+                    }}>
+                        <Text style={{fontSize: 16, color: 'red', textAlign: 'center'}}>立即更新</Text>
+                    </View></View></TouchableOpacity> :  <View style={{flexDirection: 'row'}}>
+                        <TouchableOpacity activeOpacity={1} onPress={this.clickDownload}>
+                        <View style={{
+                            borderTopWidth: 1,
+                            borderColor: '#eeeeee',
+                            height: 50,
+                            width: 125,
+                            justifyContent: 'center'
+                        }}>
+                            <Text style={{fontSize: 16, color: 'red', textAlign: 'center'}}>立即更新</Text>
+                        </View></TouchableOpacity>
+                        <TouchableOpacity activeOpacity={1} onPress={this.clickToCancelModal}><View style={{
+                            borderTopWidth: 1,
+                            borderLeftWidth: 1,
+                            height: 50,
+                            width: 125,
+                            borderColor: '#eeeeee',
+                            justifyContent: 'center'
+                        }}>
+                            <Text style={{fontSize: 16, color: '#5c5c5c', textAlign: 'center'}}>取消</Text>
+                        </View></TouchableOpacity></View>}
+            </View>
+        </View>;
+    }else{}
 
+}
     render() {
         if (this.state.renderLoading) {
             return this._renderLoading();
         } else if (this.state.renderError) {
             return this._renderError();
         } else {
+            if(this.state.sectionList.length<1){
+                return this._renderError("暂无数据点击请求");
+            }
             return (
                 <View style={{flex: 1}}>
                     {Platform.OS === 'ios' ? <StatusBar barStyle="light-content"/> : null}
                     <ScrollableTabView renderTabBar={this.renderTabBar} page={this.state.page}>
                         {this.renderContent(this.state.sectionList)}
                     </ScrollableTabView>
+                    <Modal
+                         animationType='fade'        // 淡入淡出
+                         transparent={true}              // 透明
+                         visible={this.state.showModal}    // 根据isModal决定是否显示
+                         onRequestClose={() => {this.onRequestClose()}}  // android必须实现
+                     >
+                        {this.renderModal()}
+                     </Modal>
                 </View>
+
             );
         }
     }
@@ -345,7 +536,29 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderTopWidth: 1,
         borderColor: "#CED0CE"
-    }
+    },
+    modalViewStyle:{
+        flex:1,
+        position:"absolute",
+        top:0,
+        left:0,
+        right:0,
+        bottom:0,
+        backgroundColor:'#0000007F',
+        justifyContent:'center',
+        alignItems:'center',
+
+    },
+    hudViewStyle: {
+        width:250,
+        height:300,
+        backgroundColor:'white',
+        alignItems:'center',
+        justifyContent:'space-between',
+        borderRadius:10
+    },
+
+
 });
 
 

@@ -104,7 +104,7 @@ export default class PullList extends Pullable {
      * 对外提供API, loadMore 调用
      */
     addData = (_data)=>{
-        if (_data.length == 0){
+        if (_data.length == 0 ){
             this.currentState = NoMoreState;
 
         }else{
@@ -168,7 +168,7 @@ export default class PullList extends Pullable {
     _renderEmpty = ()=>{
         console.log('没有数据');
         return (
-            <View style={[styles.contain,{justifyContent:'flex-start',marginTop:SCALE(242)}]}>
+            <View style={[styles.contain,{justifyContent:'flex-start'}]}>
                 <TouchableOpacity onPress={this.reloadData}>
                     <View style={{justifyContent:'center', alignItems:'center'}}>
                     <Image style={{width:SCALE(323),height:SCALE(267)}} source={require('../../assets/nodata.png')}/>
@@ -233,7 +233,6 @@ export default class PullList extends Pullable {
                       updateCellsBatchingPeriod={1}
                       maxToRenderPerBatch={10}
                       disableVirtualization={false}
-
                       {...this.props}
                 ItemSeparatorComponent={this.renderSeparatorView}
                 onEndReached = {this.loadMore}/>
@@ -263,7 +262,7 @@ export default class PullList extends Pullable {
                     borderTopWidth: 1,
                     borderColor: "#eee"
                 }}>
-                <ActivityIndicator animating size="large"/>
+                <ActivityIndicator animating size="small"/>
             </View>);
     };
 

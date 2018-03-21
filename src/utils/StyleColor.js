@@ -26,7 +26,8 @@ export default class StyleColor {
     static f6f8fb = '#f6f8fb';//时间背景色
     static fe461c ='#fe461c';
     static ffe7d6 = '#ffe7d6';
-    static f97578 = '#f97578'
+    static f97578 = '#f97578';
+    static FontColor = '#5C5C5C';
 }
 
 global.Color = StyleColor;

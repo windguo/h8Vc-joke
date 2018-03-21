@@ -104,7 +104,7 @@ export default class Home extends Component {
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
                             webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png'
+                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                             if (error.message != -2) {
                                 Toast.show(error.message);
@@ -116,7 +116,7 @@ export default class Home extends Component {
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
                             webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png'
+                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                             if (error.message != -2) {
                                 Toast.show(error.message);
@@ -145,7 +145,7 @@ export default class Home extends Component {
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
                             webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png'
+                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
                             Toast.show(error.message);
                         }});
@@ -155,7 +155,7 @@ export default class Home extends Component {
                         description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         type: 'news',
                         webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: 'http://h8.vc/skin/h8/images/icon_share.png'
+                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
@@ -262,6 +262,7 @@ export default class Home extends Component {
             default:
                 url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid;
         }
+        console.log('loadUrl',url);
         _fetch(fetch(url),30000)
             .then((response) =>  response.json())
             .then((responseJson) => {
@@ -480,7 +481,7 @@ export default class Home extends Component {
                             <View style={{flexDirection: 'row'}}>
                                 <View style={{flexDirection: 'row'}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isCopyed ?   <Ionicon name="ios-copy-outline" size={15} color='red'/> : <Ionicon name="ios-copy-outline" size={20} color='#5C5C5C'/>}
+                                        {item.isCopyed ?   <Ionicon name="ios-copy-outline" size={15} color='red'/> : <Ionicon name="ios-copy-outline" size={15} color='#5C5C5C'/>}
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{flexDirection: 'row',marginLeft: 10}}>
