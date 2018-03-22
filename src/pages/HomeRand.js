@@ -58,7 +58,7 @@ export default class Home extends Component {
         this.requestPageNumber = 1;
     }
     componentWillMount() {
-     this._ViewHeight = new Animated.Value(0);
+        this._ViewHeight = new Animated.Value(0);
     }
     componentDidMount() {
         this.refTextArray = [];
@@ -70,7 +70,7 @@ export default class Home extends Component {
     componentWillUnmount() {
         this.subscription.remove();
     }
-     setClipboardContent = (text,index,item) => {
+    setClipboardContent = (text,index,item) => {
         try {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
@@ -125,9 +125,16 @@ export default class Home extends Component {
             console.log('data',data)
         }
     }
+    // 报告错误
     clickToReport = () => {
         let url = urlConfig.ReportURL + '/' + this._shareItem.classid + '/' + this._shareItem.id;
         this.props.navigation.navigate('Web', {url:url});
+        this.close();
+    }
+    // 添加到收藏
+    clickToFavas = (classid, id) => {
+        let url = urlConfig.FavasURL + '/' + classid + '/' + id;
+        this.props.navigation.navigate('Web', { url: url });
         this.close();
     }
     clickToShare = (type) => {
@@ -135,15 +142,15 @@ export default class Home extends Component {
         WeChat.isWXAppInstalled().then((isInstalled) => {
             if (isInstalled) {
                 if (type === 'Session') {
-                        WeChat.shareToSession({
-                            title: "【哈吧笑话分享】",
-                            description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                            type: 'news',
-                            webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
-                        }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
-                            Toast.show(error.message);
-                        }});
+                    WeChat.shareToSession({
+                        title: "【哈吧笑话分享】",
+                        description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
+                        type: 'news',
+                        webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
+                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                    }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
+                        Toast.show(error.message);
+                    }});
                     // WeChat.shareToSession({
                     //     title: "【哈吧笑话分享】",
                     //     description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
@@ -250,7 +257,7 @@ export default class Home extends Component {
         });
     };
     dealWithrequestPage = () =>{
-      return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
+        return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
     }
     loadData = (resolve) => {
         let url = '';
@@ -259,7 +266,7 @@ export default class Home extends Component {
         }
         switch (this.props.data.classid) {
             case '0':
-               // url = urlConfig.baseURL + urlConfig.newList;
+                // url = urlConfig.baseURL + urlConfig.newList;
                 url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
                 break;
             // case '1':
@@ -280,7 +287,7 @@ export default class Home extends Component {
                     // }, 500)};
                     console.log('loadDataResult',responseJson.result);
                     this.flatList && this.flatList.setData(this.dealWithLongArray(responseJson.result), 0);
-                   // this.FlatListData = this.dealWithLongArray(responseJson.result);
+                    // this.FlatListData = this.dealWithLongArray(responseJson.result);
                     console.log('loadDataFlatListData',this.FlatListData);
                     resolve &&  resolve();
                     WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index,responseJson.result);
@@ -338,15 +345,15 @@ export default class Home extends Component {
             });
     }
     dealWithLongArray = (dataArray) => {
-       // let waitDealArray = this.state.data.concat(dataArray);
+        // let waitDealArray = this.state.data.concat(dataArray);
         //下拉刷新来几条数据，就对应的删除几条数据 ，以便填充
         let initArray = [];
         // console.log('789', sbArray);
         if (this.FlatListData){
             if (this.FlatListData.length > dataArray.length ){
-               initArray = this.FlatListData.slice(dataArray.length,this.FlatListData.length);
+                initArray = this.FlatListData.slice(dataArray.length,this.FlatListData.length);
             }else{
-                 initArray = [];
+                initArray = [];
             }
         }
         let waitDealArray = dataArray.concat(initArray).filter((value)=>{return !(!value || value === "");});
@@ -354,7 +361,7 @@ export default class Home extends Component {
             waitDealArray = waitDealArray.slice(0, 50);
             console.log('处理过的array', waitDealArray);
         }
-         this.FlatListData = waitDealArray;
+        this.FlatListData = waitDealArray;
         return waitDealArray;
     }
     dealWithLoadMoreData = (dataArray) => {
@@ -374,10 +381,10 @@ export default class Home extends Component {
             this.flatList.scrollToOffset({ offset: 0, animated: true });
             this.flatList.BeginRefresh();
             //this.loadData()
-           // setTimeout(this.flatList.StopRefresh,1000);
-         //   this.flatList.StopRefresh();
+            // setTimeout(this.flatList.StopRefresh,1000);
+            //   this.flatList.StopRefresh();
             //this.flatList.scrollToIndex({animated: true,index :2});
-           // this.setState({refreshing: true});
+            // this.setState({refreshing: true});
         }
     }
     ToastShow = (message) => {
@@ -392,7 +399,7 @@ export default class Home extends Component {
     }
     PostThumb = (item,dotop,index) => {
         //diggtop   //diggbot
-      //  {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩 传1是赞}
+        //  {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩 传1是赞}
         try {
             let upDownData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             if (dotop === 0) {
@@ -442,75 +449,120 @@ export default class Home extends Component {
         }catch (e){ this.ToastShow(e.message);}
 
     }
-  //ref={(c) => {this.refTextArray.push(c)}}
+    //ref={(c) => {this.refTextArray.push(c)}}
 //<Text style={{color: '#D3D3D3', marginLeft: 10}}>{formatData(item.newstime)}</Text>
-   // item.smalltext && item.smalltext.replace(/\s+/g, "")
+    // item.smalltext && item.smalltext.replace(/\s+/g, "")
     _renderItem = ({item, index}) => {
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
                 {/*this.refTextArray[index].setNativeProps({*/}
-                    {/*style: {color: '#D3D3D3'}*/}
+                {/*style: {color: '#D3D3D3'}*/}
                 {/*});*/}
-               // this.props.navigation.navigate('Detail', {data: this.state.data[index]});
-               // /^\r+|\n+$/g
-               // .replace(/^(\r\n)|(\n)|(\r)$/g,"")
+                // this.props.navigation.navigate('Detail', {data: this.state.data[index]});
+                // /^\r+|\n+$/g
+                // .replace(/^(\r\n)|(\n)|(\r)$/g,"")
 
             }}>
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
-                    <View style={{backgroundColor: 'white',paddingHorizontal:15,paddingTop:15}}>
+                    <View style={{ backgroundColor: '#ffffff', flexDirection: 'row', paddingHorizontal: 20, paddingTop: 15, justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ color: '#666666', fontWeight: '100' }} onPress={() => {
+                                this.props.navigation.navigate('User', {
+                                    username: item.username,
+                                    userid: item.userid
+                                });
+                            }}>
+                                (O ^
+                                <Text>
+                                    {item.username}
+                                </Text>
+                                ^ O)
+                            </Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ flexDirection: 'row' }}>
+                                {(this.props.data.classid === '0' || this.props.data.classid === '1') ? <View style={{ flexDirection: 'row' }}>
+                                    <Text style={{
+                                        paddingHorizontal: 6,
+                                        paddingVertical: 2,
+                                        borderWidth: 1,
+                                        borderRadius: 10,
+                                        fontWeight: '100',
+                                        borderColor: '#eee'
+                                    }}
+                                          onPress={() => {
+                                              this.props.pageNumber(parseInt(item.classid))
+                                          }}>
+                                        {item.classname && item.classname}
+                                    </Text>
+                                    <Text style={{
+                                        marginLeft: 10,
+                                        paddingVertical: 2,
+                                        color: '#666666',
+                                        fontWeight: '100'
+                                    }}>
+                                        {formatData(parseInt(item.newstime))}
+                                    </Text>
+                                </View> :
+                                    <View>
+                                        <Text style={{
+                                            paddingVertical: 2,
+                                            color: '#666666',
+                                            fontWeight: '100'
+                                        }}>
+                                            {formatData(parseInt(item.newstime))}
+                                        </Text>
+                                    </View>
+                                }
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ backgroundColor: 'white', paddingHorizontal: 20, paddingTop: 10 }}>
                         <Text style={{
                             fontSize: 16,
                             lineHeight: 26,
-                            color:item.isCopyed ? '#666666' : 'black',
-                            fontWeight:'100'
-                        }}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                            color: item.isCopyed ? '#666666' : 'black',
+                            fontWeight: '300'
+                        }} onPress={()=>this.setClipboardContent(item.smalltext && item.smalltext,index,item)}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/, "")}</Text>
                         <View
                             style={{
                                 flexDirection: 'row',
                                 marginTop: 15,
-                                marginBottom:15,
+                                marginBottom: 15,
                                 justifyContent: 'space-between',
                             }}>
-                            <View style={{flexDirection: 'row'}}>
-                                {(this.props.data.classid === '0' || this.props.data.classid === '1') ? <View style={{flexDirection: 'row'}}><Text style={{
-                                    paddingHorizontal: 6,
-                                    paddingVertical: 2,
-                                    borderWidth: 1,
-                                    borderRadius: 10,
-                                    fontWeight:'100',
-                                    borderColor:'#eee'
-                                }} onPress={() => {
-                                    this.props.pageNumber(parseInt(item.classid))
-                                }}>{item.classname && item.classname}</Text><Text style={{marginLeft:10,paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View> : <View><Text style={{paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View>}</View>
-                            <View style={{flexDirection: 'row'}}>
-                                <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity activeOpacity={1} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isCopyed ?   <Ionicon name="ios-copy-outline" size={15} color='red'/> : <Ionicon name="ios-copy-outline" size={15} color='#5C5C5C'/>}
+                            <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity activeOpacity={1}
+                                                  onPress={() => {
+                                                      this.clickToFavas(item.classid, item.id)
+                                                  }}
+                                                  hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                                    <IconSimple name="wallet" size={15} color='#5C5C5C' />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.PostThumb(item, 1, index) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                                        {item.isLike ? <IconSimple name="like" size={15} color='red' /> : <IconSimple name="like" size={15} color='#5C5C5C' />}
                                     </TouchableOpacity>
+                                    <Text style={{ marginLeft: 5, fontWeight: '100' }}>{item.diggtop && item.diggtop}</Text>
                                 </View>
-                                <View style={{flexDirection: 'row',marginLeft: 10}}>
-                                    <TouchableOpacity activeOpacity={1} onPress={()=>{this.PostThumb(item,1,index)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isLike ?   <IconSimple name="like" size={15} color='red'/> : <IconSimple name="like" size={15} color='#5C5C5C'/>}
+                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.PostThumb(item, 0, index) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                                        {item.isUnLike ? <IconSimple name="dislike" size={15} color='red' /> : <IconSimple name="dislike" size={15} color='#5C5C5C' />}
                                     </TouchableOpacity>
-                                    <Text style={{marginLeft: 5,fontWeight:'100'}}>{item.diggtop && item.diggtop}</Text>
+                                    <Text style={{ marginLeft: 5, fontWeight: '100' }}>{item.diggbot && item.diggbot}</Text>
                                 </View>
-                                <View style={{flexDirection: 'row', marginLeft: 10}}>
-                                    <TouchableOpacity activeOpacity={1} onPress={()=>{this.PostThumb(item,0,index)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isUnLike ?   <IconSimple name="dislike" size={15} color='red'/> : <IconSimple name="dislike" size={15} color='#5C5C5C'/>}
-                                    </TouchableOpacity>
-                                    <Text style={{marginLeft: 5,fontWeight:'100'}}>{item.diggbot && item.diggbot}</Text>
-                                </View>
-                                <View style={{flexDirection: 'row', marginLeft: 10}}>
-                                    <TouchableOpacity activeOpacity={1} onPress={()=> { this.show(item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        <IconSimple name="share" size={15} color='#5C5C5C'/>
+                                <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                                    <TouchableOpacity activeOpacity={1} onPress={() => { this.show(item) }} hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                                        <IconSimple name="share" size={15} color='#5C5C5C' />
                                     </TouchableOpacity>
                                 </View>
                             </View>
 
                         </View>
                     </View>
-                    <View style={{height: 1, backgroundColor: '#eee'}}></View>
                 </View>
             </TouchableOpacity>
         )
@@ -554,7 +606,7 @@ export default class Home extends Component {
                 console.log('XXXloadMore',responseJson,url);
                 if (responseJson.status === '1') {
                     this.flatList && this.flatList.setData(this.dealWithLoadMoreData(responseJson.result));
-                  //  this.FlatListData = this.dealWithLoadMoreData(responseJson.result);
+                    //  this.FlatListData = this.dealWithLoadMoreData(responseJson.result);
                 }else{
                     Toast.show(responseJson.message, {
                         duration: Toast.durations.SHORT,
@@ -617,7 +669,7 @@ export default class Home extends Component {
         return (
             <View style={{flex: 1}} >
                 <PullList
-                  //  data={this.state.data}
+                    //  data={this.state.data}
                     keyExtractor={this._keyExtractor}
                     onPullRelease={this.onPullRelease}
                     renderItem={this._renderItem}

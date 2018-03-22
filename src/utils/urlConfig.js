@@ -2,24 +2,26 @@
  * Created by zhangzuohua on 2018/1/22.
  */
 export default urlConfig = {
-  //  baseURL: 'http://jianjie.92kaifa.com',
+    //  baseURL: 'http://jianjie.92kaifa.com',
     baseURL: 'http://www.jianjie8.com',
     //举报URL
     ReportURL: 'http://m.jianjie8.com/report',
+    // 收藏url
+    FavasURL: 'http://m.jianjie8.com/fava',
     agreementURL: 'http://m.jianjie8.com/agreement',
     suggestURL:"http://www.jianjie8.com/e/tool/feedback/?bid=1",
     //最新更新
-   //  newList: '/e/api/?getJson=new',
-   // // 随机穿越
-   //  randomList: '/e/api/?getJson=rand',
-   //待处理
-   //栏目列表 http://jianjie.92kaifa.com/e/api/getNewsClass.php
-   // sectionList:'/e/api/?getJson=class',
-     sectionList:'/e/api/list/new.php?getJson=class',
+    //  newList: '/e/api/?getJson=new',
+    // // 随机穿越
+    //  randomList: '/e/api/?getJson=rand',
+    //待处理
+    //栏目列表 http://jianjie.92kaifa.com/e/api/getNewsClass.php
+    // sectionList:'/e/api/?getJson=class',
+    sectionList:'/e/api/list/new.php?getJson=class',
 //随机
     sectionListRand:'/e/api/list/rand.php?getJson=class',
     //栏目列表数据后面拼接&classid=3
-   // sectionListData:'/e/api/?getJson=column',
+    // sectionListData:'/e/api/?getJson=column',
     sectionListData:'/e/api/list/new.php?getJson=column',
 //随机
     sectionListDataRand:'/e/api/list/rand.php?getJson=column',
@@ -29,7 +31,11 @@ export default urlConfig = {
     thumbUpUrl:'/e/public/digg/post/index.php',
     thumbDownUrl:'/e/public/digg/post/diggbot.php',
     LoginUrl: 'http://www.jianjie8.com/e/member/doaction.php',
-    MyCollectLaugh: 'http://www.jianjie8.com/e/api/member/info.php?getJson=article',
+    // 我发布的内容
+    MyPublishUrl: 'http://www.jianjie8.com/e/api/member/info.php?getJson=article',
+    // 我收藏的内容
+    MyFavasUrl: 'http://www.jianjie8.com/e/api/content/?getJson=favas',
+    userInfo: 'http://www.jianjie8.com/e/api/member/info.php?getJson=article',
     //更新检测地址
     CheckUpdate:"http://www.jianjie8.com/e/api/?getJson=version",
 

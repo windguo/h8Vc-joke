@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.theweflex.react.WeChatPackage;
+import com.theweflex.react.WeChatPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;

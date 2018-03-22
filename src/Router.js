@@ -13,19 +13,19 @@ import {
     DeviceEventEmitter,
     Image,
 } from 'react-native';
-
-
 import {StackNavigator,TabNavigator} from 'react-navigation';
 import Detail from '../src/pages/Detail';
 import web from '../src/pages/web';
 import Home from '../src/pages/Home';
 import ScrollTabView from './pages/ScrollTabView';
 import ScrollTabViewRand from './pages/ScrollTabViewRand';
-import Me from './pages/Me';
 import Tab from '../src/components/Tab'
 import Login from  '../src/pages/Login'
-import MyCollectLaugh from '../src/pages/MyCollectLaugh'
-import Test from "./pages/test";
+import Search from './pages/Search/Index';
+import My from './pages/My/Index';
+import Publish from '../src/pages/My/Publish'
+import Collection from '../src/pages/My/Collection'
+import User from '../src/pages/User'
 const tabbaroption = {
     activeTintColor: 'red',
     inactiveTintColor: '#999999',
@@ -73,7 +73,7 @@ const _configureTransition = () => {
 const TabNavigaApp = TabNavigator({
     New: { screen: ScrollTabView },
     Rand: { screen: ScrollTabViewRand },
-    Me:{screen: Me}
+    My:{screen: My}
 },{
     lazy: false,
     swipeEnabled: false,
@@ -106,11 +106,12 @@ const NavgationApp = StackNavigator({
     Detail: {screen: Detail},
     Web: {screen: web},
     Login: {screen: Login},
-    MyCollectLaugh: {screen: MyCollectLaugh},
-    Test:{screen:Test}
+    Publish: {screen: Publish},
+    Collection: {screen: Collection},
+    User: {screen: User},
+    Search: {screen: Search}
 }, {initialRouteName: 'Index'});
 export default class Router extends React.Component {
-
     render() {
         return <NavgationApp/>;
     }

@@ -40,7 +40,7 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		842BD7E1A5584D4B829D57D8 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D12540FC677549B0B09D000F /* libCodePush.a */; };
 		8D9F82FEF4854CF79F572E55 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = EF3DD0C6FCE44810A57FD947 /* libresolv.tbd */; };
-		99817578A1284086A04EBE2B /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5297A192F6A34293AEBFFA5C /* UserNotifications.framework */; };
+		99817578A1284086A04EBE2B /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5297A192F6A34293AEBFFA5C /* UserNotifications.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		99EFF5B745514E30A2145C35 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93039A87CA8C4A24A2328363 /* Security.framework */; };
 		A7A83DC1431E460AA674A9AC /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E7A35FB20D432BB5315652 /* libRNVectorIcons.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
@@ -479,6 +479,7 @@
 		DD03EF3C202AA40E00C01F5D /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		DD03EF3E202AA42400C01F5D /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		DD03EF4A202ACA5E00C01F5D /* RCTWeChat.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWeChat.xcodeproj; path = "../node_modules/react-native-wechat/ios/RCTWeChat.xcodeproj"; sourceTree = "<group>"; };
+		DD0927D220624C6900116105 /* toutiao.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = toutiao.entitlements; path = toutiao/toutiao.entitlements; sourceTree = "<group>"; };
 		DD3F994D2045579E006C655B /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
 		DD3F994E2045579E006C655B /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
 		DD3F994F2045579E006C655B /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
@@ -629,6 +630,7 @@
 		13B07FAE1A68108700A75B9A /* toutiao */ = {
 			isa = PBXGroup;
 			children = (
+				DD0927D220624C6900116105 /* toutiao.entitlements */,
 				DD66B56120512B410046452B /* libs */,
 				DD3F994C2045579E006C655B /* Fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -945,6 +947,11 @@
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 3YYC9MKAZX;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -1479,6 +1486,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = toutiao/toutiao.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1531,6 +1539,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = toutiao/toutiao.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -1696,6 +1705,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_ENTITLEMENTS = toutiao/toutiao.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

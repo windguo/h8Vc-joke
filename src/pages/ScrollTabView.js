@@ -178,7 +178,7 @@ export  default  class ScrollTabView extends Component {
     //这里执行要跳转的页面
     jumpToOther = ()=>{
         console.log('JPushModule jump to SecondActivity')
-         this.props.navigation.navigate('Test')
+       //  this.props.navigation.navigate('Test')
     }
 
     InitJPush=()=>{
@@ -200,41 +200,42 @@ export  default  class ScrollTabView extends Component {
         }
 
         if (Platform.OS === 'ios') {
-            JPushModule.setupPush()
+            JPushModule.setupPush();
+            JPushModule.setBadge(0, success => {})
         }
 
-        JPushModule.addReceiveCustomMsgListener(map => {
-            console.log('JPushModule CustomMsgextras: ' + map.extras)
-            console.log('JPushModule CustomMsg',map.toString());
-        })
+        // JPushModule.addReceiveCustomMsgListener(map => {
+        //     console.log('JPushModule CustomMsgextras: ' + map.extras)
+        //     console.log('JPushModule CustomMsg',map.toString());
+        // })
 
-        JPushModule.addReceiveNotificationListener(map => {
-            console.log('JPushModule Notification alertContent: ' + map.alertContent)
-            console.log('JPushModule Notification extras: ' + map.extras)
-            var extra = JSON.parse(map.extras);
-            console.log("JPushModule Notification",extra.key + ": " + extra.value);
-        })
+        // JPushModule.addReceiveNotificationListener(map => {
+        //     console.log('JPushModule Notification alertContent: ' + map.alertContent)
+        //     console.log('JPushModule Notification extras: ' + map.extras)
+        //    /// var extra = JSON.parse(map.extras);
+        //     console.log("JPushModule Notification",extra.key + ": " + extra.value);
+        // })
 
         //点击回调这个函数
-        JPushModule.addReceiveOpenNotificationListener(map => {
-            console.log('JPushModule Openingnotification!')
-            console.log('JPushModule map.extra: ' + map.extras)
-            this.jumpToOther()
-            // JPushModule.jumpToPushActivity("SecondActivity");
-        })
+        // JPushModule.addReceiveOpenNotificationListener(map => {
+        //     console.log('JPushModule Openingnotification!')
+        //     console.log('JPushModule map.extra: ' + map.extras)
+        //     this.jumpToOther()
+        //     // JPushModule.jumpToPushActivity("SecondActivity");
+        // })
 
-        JPushModule.addGetRegistrationIdListener(registrationId => {
-            console.log('JPushModule Device register succeed, registrationId ' + registrationId)
-        })
+        // JPushModule.addGetRegistrationIdListener(registrationId => {
+        //     console.log('JPushModule Device register succeed, registrationId ' + registrationId)
+        // })
     }
 
     componentWillUnmount() {
         //删除状态改变事件监听
         AppState.removeEventListener('change');
         NetInfo.removeEventListener('connectionChange');
-        JPushModule.removeReceiveCustomMsgListener();
-        JPushModule.removeReceiveNotificationListener();
-        JPushModule.clearAllNotifications()
+        // JPushModule.removeReceiveCustomMsgListener();
+        // JPushModule.removeReceiveNotificationListener();
+        // JPushModule.clearAllNotifications()
 
     }
     handleAppStateChange = (appState) => {

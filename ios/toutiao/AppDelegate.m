@@ -45,14 +45,12 @@
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler
 {
   NSDictionary * userInfo = notification.request.content.userInfo;
-  if ([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+  if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
     [JPUSHService handleRemoteNotification:userInfo];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJPFDidReceiveRemoteNotification object:userInfo];
   }
-
-  completionHandler(UNNotificationPresentationOptionAlert);
+  completionHandler(UIUserNotificationTypeAlert);
 }
-
 - (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler
 {
   NSDictionary * userInfo = response.notification.request.content.userInfo;
@@ -60,10 +58,8 @@
     [JPUSHService handleRemoteNotification:userInfo];
     [[NSNotificationCenter defaultCenter] postNotificationName:kJPFOpenNotification object:userInfo];
   }
-
   completionHandler();
 }
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   [JPUSHService setupWithOption:launchOptions appKey:@"b0fccf1d571ed454fb27f0af"
@@ -93,6 +89,7 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;
+  
 }
 // ios 9.0+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url

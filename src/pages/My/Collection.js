@@ -1,3 +1,4 @@
+
 /**
  * Created by zhangzuohua on 2018/1/22.
  */
@@ -28,22 +29,42 @@ import {
     FlatList,
     Clipboard
 } from 'react-native';
-import urlConfig  from  '../../src/utils/urlConfig';
-import ModalUtil from '../utils/modalUtil';
-import formatData from '../../src/utils/formatData';
+import urlConfig  from  '../../utils/urlConfig';
+import ModalUtil from '../../utils/modalUtil';
+import formatData from '../../utils/formatData';
 import Toast from 'react-native-root-toast';
-import LoadError from  '../components/loadError';
-import  _fetch from '../utils/_fetch'
+import LoadError from  '../../components/loadError';
+import  _fetch from '../../utils/_fetch'
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
-import PullList from '../components/pull/PullList'
-import storageKeys from '../utils/storageKeyValue'
+import PullList from '../../components/pull/PullList'
+import storageKeys from '../../utils/storageKeyValue'
 import * as WeChat from 'react-native-wechat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
-export default class Home extends Component {
+import { ifIphoneX } from '../../utils/iphoneX';
+export default class MyCollectLaugh extends Component {
     static navigationOptions = {
+        header:({navigation}) =>{
+            return (
+                <ImageBackground style={{...header}} source={require('../../assets/backgroundImageHeader.png')} resizeMode='cover'>
+                    <TouchableOpacity activeOpacity={1} onPress={() => {
+                        navigation.goBack(null);
+                    }}>
+                        <View style={{justifyContent:'center',marginLeft:10,alignItems:'center',height:43.7}}>
+                            <IconSimple name="arrow-left" size={20} color='white'/>
+                        </View>
+                    </TouchableOpacity>
+                    <Text style={{fontSize:17,textAlign:'center',fontWeight:'bold',lineHeight:43.7,color:'white'}}>我收藏的内容</Text>
+                    <TouchableOpacity activeOpacity={1} onPress={() => {
+                    }}>
+                        <View style={{justifyContent:'center',marginRight:10,alignItems:'center',height:43.7,backgroundColor:'transparent',width:20}}>
+                        </View>
+                    </TouchableOpacity>
+                </ImageBackground>
+            )
+        }
     };
     constructor(props) {
         super(props);
@@ -61,14 +82,11 @@ export default class Home extends Component {
         this._ViewHeight = new Animated.Value(0);
     }
     componentDidMount() {
-        this.refTextArray = [];
-        this.subscription = DeviceEventEmitter.addListener('reloadData', this.refreshing);
         InteractionManager.runAfterInteractions(() => {
             this.loadData();
         });
     }
     componentWillUnmount() {
-        this.subscription.remove();
     }
     setClipboardContent = (text,index,item) => {
         try {
@@ -135,11 +153,6 @@ export default class Home extends Component {
         this.props.navigation.navigate('Web', {url:url});
         this.close();
     }
-    clickToFavas = (classid,id) => {
-        let url = urlConfig.FavasURL + '/' + classid + '/' + id;
-        this.props.navigation.navigate('Web', { url: url });
-       // this.close();
-    }
     clickToShare = (type) => {
         this.close();
         WeChat.isWXAppInstalled().then((isInstalled) => {
@@ -192,7 +205,7 @@ export default class Home extends Component {
                                 onPress={()=>this.clickToShare('Session')}
                             >
                                 <View style={styles.shareContent}>
-                                    <Image style={styles.shareIcon} source={require('../assets/share_icon_wechat.png')} />
+                                    <Image style={styles.shareIcon} source={require('../../assets/share_icon_wechat.png')} />
                                     <Text style={styles.spinnerTitle}>微信好友</Text>
                                 </View>
                             </TouchableOpacity>
@@ -201,7 +214,7 @@ export default class Home extends Component {
                                 onPress={()=>this.clickToShare('TimeLine')}
                             >
                                 <View style={styles.shareContent}>
-                                    <Image style={styles.shareIcon} source={require('../assets/share_icon_moments.png')} />
+                                    <Image style={styles.shareIcon} source={require('../../assets/share_icon_moments.png')} />
                                     <Text style={styles.spinnerTitle}>微信朋友圈</Text>
                                 </View>
                             </TouchableOpacity>
@@ -251,45 +264,21 @@ export default class Home extends Component {
         return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
     }
     loadData = (resolve) => {
-        let url = '';
-        if (!this.props.data) {
-            return;
-        }
-        switch (this.props.data.classid) {
-            case '0':
-                // url = urlConfig.baseURL + urlConfig.newList;
-                url = urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid;
-                break;
-            // case '1':
-            //    // url =  this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.randomList  : urlConfig.baseURL + urlConfig.randomList;
-            //     url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid;
-            //     break;
-            default:
-                url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid;
-        }
-        console.log('loadUrl',url);
+        let url = urlConfig.MyFavasUrl + '&userid=' + GLOBAL.userInfo.userid;
         _fetch(fetch(url),30000)
             .then((response) =>  response.json())
             .then((responseJson) => {
                 console.log('urlloadDatarespond',responseJson,url);
                 if (responseJson.status === '1') {
-                    // this.updateNumMessage = responseJson.updateNum;
-                    // if (this.updateNumMessage && this.isNotfirstFetch) {  setTimeout(() => {
-                    //     this.setState({loadNewData: true})
-                    // }, 500)};
-                    console.log('loadDataResult',responseJson.result);
+                    console.log('myCollectList',responseJson.result);
                     this.flatList && this.flatList.setData(this.dealWithLongArray(responseJson.result), 0);
-                    // this.FlatListData = this.dealWithLongArray(responseJson.result);
                     console.log('loadDataFlatListData',this.FlatListData);
                     resolve &&  resolve();
-                    WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index,responseJson.result);
-                    setTimeout(() => {
-                        this.setState({loadNewData: false})
-                    }, 1500)
+                    WRITE_CACHE(storageKeys.MyCollectList,responseJson.result);
                     //要求除了最新外其他页面非第一次接口请求都要加上&num
                     if (this.props.index !== 0){ this.isNotfirstFetch = true};
                 }else{
-                    READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
+                    READ_CACHE(storageKeys.MyCollectList,(res)=>{
                         if (res && res.length > 0) {
                             this.flatList && this.flatList.setData(res, 0);
                             this.FlatListData = res;
@@ -307,7 +296,7 @@ export default class Home extends Component {
                 }
             })
             .catch((error) => {
-                READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
+                READ_CACHE(storageKeys.MyCollectList,(res)=>{
                     if (res && res.length > 0) {
                         this.flatList && this.flatList.setData(res, 0);
                         this.FlatListData = res;
@@ -336,10 +325,8 @@ export default class Home extends Component {
             });
     }
     dealWithLongArray = (dataArray) => {
-        // let waitDealArray = this.state.data.concat(dataArray);
         //下拉刷新来几条数据，就对应的删除几条数据 ，以便填充
         let initArray = [];
-        // console.log('789', sbArray);
         if (this.FlatListData){
             if (this.FlatListData.length > dataArray.length ){
                 initArray = this.FlatListData.slice(dataArray.length,this.FlatListData.length);
@@ -367,17 +354,6 @@ export default class Home extends Component {
         this.FlatListData = waitDealArray;
         return waitDealArray;
     }
-    refreshing = () => {
-        if (this.props.index === global.activeTab){
-            this.flatList.scrollToOffset({ offset: 0, animated: true });
-            this.flatList.BeginRefresh();
-            //this.loadData()
-            // setTimeout(this.flatList.StopRefresh,1000);
-            //   this.flatList.StopRefresh();
-            //this.flatList.scrollToIndex({animated: true,index :2});
-            // this.setState({refreshing: true});
-        }
-    }
     ToastShow = (message) => {
         Toast.show(message, {
             duration: Toast.durations.SHORT,
@@ -387,9 +363,6 @@ export default class Home extends Component {
             hideOnPress: true,
             delay: 0,
         });
-    }
-    navigateToDetail = () => {
-        this.props.navigation.navigate('Detail', { data: this.state.data[index] });
     }
     PostThumb = (item,dotop,index) => {
         //diggtop   //diggbot
@@ -443,82 +416,20 @@ export default class Home extends Component {
         }catch (e){}
 
     }
-    //ref={(c) => {this.refTextArray.push(c)}}
-//<Text style={{color: '#D3D3D3', marginLeft: 10}}>{formatData(item.newstime)}</Text>
-    // item.smalltext && item.smalltext.replace(/\s+/g, "")
     _renderItem = ({item, index}) => {
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
-                {/*this.refTextArray[index].setNativeProps({*/}
-                {/*style: {color: '#D3D3D3'}*/}
-                {/*});*/}
-                // this.props.navigation.navigate('Detail', {data: this.state.data[index]});
-                // /^\r+|\n+$/g
-                // .replace(/^(\r\n)|(\n)|(\r)$/g,"")
-                // <Image style={{width: 20, height: 20}} source={item.isLike ?require('../assets/upRed.jpg') : require('../assets/up.jpg')}/>
-
             }}>
 
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
-                    <View style={{ backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingTop: 15, justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={{ color: '#666666', fontWeight: '100' }} onPress={() => {
-                                this.props.navigation.navigate('User', {
-                                    username: item.username,
-                                    userid: item.userid
-                                });
-                            }}>
-                                (O ^
-                                <Text>
-                                    {item.username}
-                                </Text>
-                                ^ O)
-                            </Text>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}>
-                            {(this.props.data.classid === '0' || this.props.data.classid === '1') ? <View style={{ flexDirection: 'row' }}>
-                                <Text style={{
-                                    paddingHorizontal: 6,
-                                    paddingVertical: 2,
-                                    borderWidth: 1,
-                                    borderRadius: 10,
-                                    fontWeight: '100',
-                                    borderColor: '#eee'
-                                }}
-                                      onPress={() => {
-                                          this.props.pageNumber(parseInt(item.classid))
-                                      }}>
-                                    {item.classname && item.classname}
-                                </Text>
-                                <Text style={{
-                                    marginLeft: 10,
-                                    paddingVertical: 2,
-                                    color: '#666666',
-                                    fontWeight: '100'
-                                }}>
-                                    {formatData(parseInt(item.newstime))}
-                                </Text>
-                            </View> :
-                                <View>
-                                    <Text style={{
-                                        paddingVertical: 2,
-                                        color: '#666666',
-                                        fontWeight: '100'
-                                    }}>
-                                        {formatData(parseInt(item.newstime))}
-                                    </Text>
-                                </View>
-                            }
-                        </View>
-                    </View>
-                    <View style={{ backgroundColor: 'white', paddingHorizontal: 20,paddingTop:10}}>
+                    <View style={{backgroundColor: 'white',paddingHorizontal:15,paddingTop:15}}>
                         <Text style={{
                             fontSize: 16,
                             lineHeight: 26,
                             color:item.isCopyed ? '#666666' : 'black',
-                            fontWeight:'300'
-                        }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                            fontWeight:'100'
+                        }}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -527,15 +438,13 @@ export default class Home extends Component {
                                 justifyContent: 'space-between',
                             }}>
                             <View style={{flexDirection: 'row'}}>
-                                <TouchableOpacity activeOpacity={1}
-                                                  onPress={() => {
-                                                      this.clickToFavas(item.classid, item.id)
-                                                  }}
-                                                  hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
-                                     <IconSimple name="wallet" size={15} color='#5C5C5C' />
-                                </TouchableOpacity>
-                            </View>
+                                <View style={{flexDirection: 'row'}}><Text style={{paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View></View>
                             <View style={{flexDirection: 'row'}}>
+                                <View style={{flexDirection: 'row'}}>
+                                    <TouchableOpacity activeOpacity={1} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
+                                        {item.isCopyed ?   <Ionicon name="ios-copy-outline" size={15} color='red'/> : <Ionicon name="ios-copy-outline" size={15} color='#5C5C5C'/>}
+                                    </TouchableOpacity>
+                                </View>
                                 <View style={{flexDirection: 'row',marginLeft: 10}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.PostThumb(item,1,index)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
                                         {item.isLike ?   <IconSimple name="like" size={15} color='red'/> : <IconSimple name="like" size={15} color='#5C5C5C'/>}
@@ -557,6 +466,7 @@ export default class Home extends Component {
 
                         </View>
                     </View>
+                    <View style={{height: 1, backgroundColor: '#eee'}}></View>
                 </View>
             </TouchableOpacity>
         )
@@ -565,30 +475,15 @@ export default class Home extends Component {
         this.loadData(resolve);
     };
     loadMore = async()=>{
-        // if (this.props.index !== 1) {
-        //     return;
-        // }
-
-        let url = '';
         this.requestPageNumber += 1;
-        if (!this.props.data) {
-            return;
-        }
-        switch (this.props.data.classid) {
-            case '0':
-                url = urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid + this.dealWithrequestPage();
-                break;
-            default:
-                url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid +  this.dealWithrequestPage():urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid+ this.dealWithrequestPage();
-
-        }
+        let url = urlConfig.MyFavasUrl  + '&userid=' + GLOBAL.userInfo.userid + this.dealWithrequestPage();
         _fetch(fetch(url),30000)
             .then((response) => response.json())
             .then((responseJson) => {
                 console.log('XXXloadMore',responseJson,url);
                 if (responseJson.status === '1') {
                     this.flatList && this.flatList.setData(this.dealWithLoadMoreData(responseJson.result));
-                    //  this.FlatListData = this.dealWithLoadMoreData(responseJson.result);
+                   // this.flatList && this.flatList.addData(responseJson.result);
                 }else{
                     Toast.show(responseJson.message, {
                         duration: Toast.durations.SHORT,
@@ -623,18 +518,6 @@ export default class Home extends Component {
             });
 
     };
-//     //   <PullList
-//     //  data={this.state.data}
-//     keyExtractor={this._keyExtractor}
-// onPullRelease={this.onPullRelease}
-// renderItem={this._renderItem}
-// onEndReached={this.loadMore}
-// style={{backgroundColor: 'white'}}
-// ref={(c) => {this.flatList = c}}
-// ifRenderFooter={this.props.index !== 1 ? false : true}
-//
-// />
-    //  <Text style={{color: '#4884BE'}}>{this.updateNumMessage}</Text>
     _keyExtractor = (item, index) => index;
     render() {
         return (
@@ -703,3 +586,16 @@ const styles = StyleSheet.create({
         height: 40
     }
 });
+const header = {
+    backgroundColor: '#C7272F',
+    ...ifIphoneX({
+        paddingTop: 44,
+        height: 88
+    }, {
+        paddingTop: Platform.OS === "ios" ? 20 : SCALE(StatusBarHeight()),
+        height:64,
+    }),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems:'flex-end'
+}
