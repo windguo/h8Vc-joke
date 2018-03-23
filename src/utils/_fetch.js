@@ -25,11 +25,4 @@ function _fetch(fetch_promise, timeout) {
     return abortable_promise;
 
 }
-
-// //_fetch(fetch('//a.com/b/c'), 2000)
-// .then(function(res) {
-//     console.log(res)
-// }, function(err) {
-//     console.log(err);
-// });
 export default _fetch;

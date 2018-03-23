@@ -75,7 +75,7 @@ const TabNavigaApp = TabNavigator({
     Rand: { screen: ScrollTabViewRand },
     My:{screen: My}
 },{
-    lazy: false,
+    lazy: true,
     swipeEnabled: false,
     tabBarPosition: 'bottom',
     animationEnabled: true,

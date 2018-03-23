@@ -32,6 +32,7 @@ import storageKeys from '../utils/storageKeyValue';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 import { ifIphoneX } from '../utils/iphoneX';
+import HttpUtil from  '../utils/HttpUtil';
 export default class Login extends React.Component {
     static navigationOptions = {
         header:({navigation}) =>{
@@ -83,7 +84,7 @@ export default class Login extends React.Component {
             alert('请输入完整的用户密码');
         }
     };
-    login = () => {
+    login = async() => {
         let url = urlConfig.LoginUrl;
         let formData = new FormData();
         formData.append("hfrom", 'app');
@@ -95,42 +96,24 @@ export default class Login extends React.Component {
         console.log('formData',formData);
         this.setState({visble:true});
         let ContentType = '';
-        Platform.OS === 'ios' ? ContentType ='application/json' : ContentType = 'multipart/form-data'
-        fetch(url, {
-            method: 'POST',
-            headers: {'credentials': 'include',
-                'Accept': 'application/json',
-                'Content-Type': ContentType,
-                'X-Requested-With': 'XMLHttpRequest',
-                'source':'h5',
-                'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',},
-            body: formData
-        }).then((response) =>  response.json()).then((respond) => {
-            this.setState({visble:false});
-            if (respond.status === 1 && respond.result){
-                Toast.show('登录成功', {
-                    duration: Toast.durations.SHORT,
-                    position: Toast.positions.CENTER,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                });
-                WRITE_CACHE(storageKeys.userInfo,respond.result);
-                GLOBAL.userInfo = respond.result;
-                this.props.navigation.goBack(null);
-                this.props.navigation.state.params.callBack && this.props.navigation.state.params.callBack(respond.result.username);}
-        }).catch((error) => {
-            this.setState({visble:false});
-            Toast.show('登录失败', {
-                duration: Toast.durations.SHORT,
-                position: Toast.positions.CENTER,
-                shadow: true,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-            });
-        });
+        Platform.OS === 'ios' ? ContentType ='application/json' : ContentType = 'multipart/form-data';
+        const headers = {'credentials': 'include',
+            'Accept': 'application/json',
+            'Content-Type': ContentType,
+            'X-Requested-With': 'XMLHttpRequest',
+            'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36',};
+        let res = await HttpUtil.POST(url,formData);
+        console.log('xxxxxx',res);
+        if (!res || !res.result){
+          //  this.ToastShow('失败');
+            return ;
+        }
+        this.setState({visble:false});
+        WRITE_CACHE(storageKeys.userInfo,res.result);
+        GLOBAL.userInfo = res.result;
+        this.props.navigation.goBack(null);
+        this.props.navigation.state.params.callBack && this.props.navigation.state.params.callBack(res.result.username);
+
     }
     render(){
         return (<ScrollView style={{ backgroundColor:'#eeeeee', width: WIDTH,flex:1}} contentContainerStyle={{alignItems:'center'}}>
@@ -175,11 +158,9 @@ export default class Login extends React.Component {
                    visible={this.state.visble}>
                 <View style={[styles.load_box]}>
                     <ActivityIndicator animating={true} color={this.props.color || '#FFF'} size={'large'} style={styles.load_progress} />
-                    <Text style={[styles.load_text, this.props.textStyle]}>{this.state.text}</Text>
+                    <Text style={[styles.load_text, this.props.textStyle]}>登录中</Text>
                 </View>
-
             </Modal>
-
         </ScrollView>)
     }
 }

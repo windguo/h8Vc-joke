@@ -34,7 +34,6 @@ import ModalUtil from '../../utils/modalUtil';
 import formatData from '../../utils/formatData';
 import Toast from 'react-native-root-toast';
 import LoadError from  '../../components/loadError';
-import  _fetch from '../../utils/_fetch'
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 import PullList from '../../components/pull/PullList'
@@ -43,6 +42,7 @@ import * as WeChat from 'react-native-wechat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import HttpUtil from  '../../utils/HttpUtil';
 import { ifIphoneX } from '../../utils/iphoneX';
 export default class MyCollectLaugh extends Component {
     static navigationOptions = {
@@ -93,8 +93,7 @@ export default class MyCollectLaugh extends Component {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
             this.flatList.setData(DeepCopyData);
-            Clipboard.setString(item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + "http://m.jianjie8.com/detail/" + item.classid + '/' + item.id);
-            console.log('复制的文本',item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + "http://m.jianjie8.com/detail/" + item.classid + '/' + item.id)
+            Clipboard.setString(item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + urlConfig.DetailUrl + item.classid + '/' + item.id);
             Toast.show('复制成功', {
                 duration: Toast.durations.SHORT,
                 position: Toast.positions.CENTER,
@@ -121,8 +120,8 @@ export default class MyCollectLaugh extends Component {
                             title: "【哈吧笑话分享】",
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
-                            webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                            webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                            thumbImage: urlConfig.thumbImage,
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                             if (error.message != -2) {
                                 Toast.show(error.message);
@@ -133,8 +132,8 @@ export default class MyCollectLaugh extends Component {
                             title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
-                            webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                            webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                            thumbImage: urlConfig.thumbImage,
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                             if (error.message != -2) {
                                 Toast.show(error.message);
@@ -162,8 +161,8 @@ export default class MyCollectLaugh extends Component {
                         title: "【哈吧笑话分享】",
                         description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         type: 'news',
-                        webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                        webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
                         Toast.show(error.message);
                     }});
@@ -172,8 +171,8 @@ export default class MyCollectLaugh extends Component {
                         title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         type: 'news',
-                        webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                        webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
@@ -261,68 +260,18 @@ export default class MyCollectLaugh extends Component {
     dealWithrequestPage = () =>{
         return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
     }
-    loadData = (resolve) => {
+    loadData = async(resolve)=>{
         let url = urlConfig.MyPublishUrl + '&userid=' + GLOBAL.userInfo.userid;
-        _fetch(fetch(url),30000)
-            .then((response) =>  response.json())
-            .then((responseJson) => {
-                console.log('urlloadDatarespond',responseJson,url);
-                if (responseJson.status === '1') {
-                    console.log('myCollectList',responseJson.result);
-                    this.flatList && this.flatList.setData(this.dealWithLongArray(responseJson.result), 0);
-                    console.log('loadDataFlatListData',this.FlatListData);
-                    resolve &&  resolve();
-                    WRITE_CACHE(storageKeys.MyCollectList,responseJson.result);
-                    //要求除了最新外其他页面非第一次接口请求都要加上&num
-                    if (this.props.index !== 0){ this.isNotfirstFetch = true};
-                }else{
-                    READ_CACHE(storageKeys.MyCollectList,(res)=>{
-                        if (res && res.length > 0) {
-                            this.flatList && this.flatList.setData(res, 0);
-                            this.FlatListData = res;
-                        }else{}
-                    },(err)=>{
-                    });
-                    Toast.show(responseJson.message, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                }
-            })
-            .catch((error) => {
-                READ_CACHE(storageKeys.MyCollectList,(res)=>{
-                    if (res && res.length > 0) {
-                        this.flatList && this.flatList.setData(res, 0);
-                        this.FlatListData = res;
-                    }else{}
-                },(err)=>{
-                });
-                alert(JSON.stringify(error));
-                if(error.message.indexOf('JSON') >= 0) {
-                    Toast.show((error.message), {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                    return ;
-                }
-                Toast.show(error.message, {
-                    duration: Toast.durations.SHORT,
-                    position: Toast.positions.CENTER,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                });
-            });
-    }
+        console.log('loadUrl',url);
+        let res = await HttpUtil.GET(url);
+        resolve && resolve();
+        if(!res||!res.result){
+            return;
+        }
+        let result = res.result ? res.result:[];
+        this.flatList && this.flatList.setData(this.dealWithLongArray(result), 0);
+        console.log('res', res);
+    };
     dealWithLongArray = (dataArray) => {
         //下拉刷新来几条数据，就对应的删除几条数据 ，以便填充
         let initArray = [];
@@ -363,9 +312,7 @@ export default class MyCollectLaugh extends Component {
             delay: 0,
         });
     }
-    PostThumb = (item,dotop,index) => {
-        //diggtop   //diggbot
-        //  {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩 传1是赞}
+    PostThumb = async(item,dotop,index) => {
         try {
             let upDownData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             if (dotop === 0) {
@@ -391,30 +338,24 @@ export default class MyCollectLaugh extends Component {
             formData.append("dotop", '' + dotop);
             formData.append("doajax", '' + 1);
             formData.append("ajaxarea", "diggnum");
-
-            fetch(url, {
-                method: 'POST',
-                headers: {},
-                body: formData
-            }).then((respond) => {
-                let message = '';
-                let array = respond._bodyInit.split('|');
-                if (array.length > 0) {
-                    message = array[array.length - 1];
-                }
-                if (message === '谢谢您的支持' || message === '谢谢您的意见') {
-                    this.flatList.setData(upDownData);
-                    //只能操作数据源修改列表数据  很大的损耗啊
-                    this.FlatListData = upDownData;
-                }
-                this.ToastShow(message);
-            }).catch((error) => {
-                this.ToastShow('失败');
-                throw error;
-            });
+            let res = await HttpUtil.POST(url,formData,'dotop');
+            if (!res){
+                return ;
+            }
+            let message = '';
+            let array = res._bodyInit.split('|');
+            if (array.length > 0) {
+                message = array[array.length - 1];
+            }
+            if (message === '谢谢您的支持' || message === '谢谢您的意见') {
+                this.flatList.setData(upDownData);
+                //只能操作数据源修改列表数据  很大的损耗啊
+                this.FlatListData = upDownData;
+            }
+            this.ToastShow(message);
         }catch (e){}
-
     }
+
     _renderItem = ({item, index}) => {
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
@@ -473,49 +414,17 @@ export default class MyCollectLaugh extends Component {
     onPullRelease = async (resolve) => {
         this.loadData(resolve);
     };
+
     loadMore = async()=>{
         this.requestPageNumber += 1;
         let url = urlConfig.MyPublishUrl  + '&userid=' + GLOBAL.userInfo.userid + this.dealWithrequestPage();
-        _fetch(fetch(url),30000)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                console.log('XXXloadMore',responseJson,url);
-                if (responseJson.status === '1') {
-                    this.flatList && this.flatList.setData(this.dealWithLoadMoreData(responseJson.result));
-                   // this.flatList && this.flatList.addData(responseJson.result);
-                }else{
-                    Toast.show(responseJson.message, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                }
-            })
-            .catch((error) => {
-                if(error.message.indexOf('JSON') >= 0) {
-                    Toast.show(('网络错误'), {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                    return ;
-                }
-                Toast.show('网络错误', {
-                    duration: Toast.durations.SHORT,
-                    position: Toast.positions.CENTER,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                });
-            });
-
+        let res = await HttpUtil.GET(url);
+        if(!res||!res.result){
+            return;
+        }
+        let result = res.result ? res.result:[];
+        this.flatList && this.flatList.setData(this.dealWithLoadMoreData(result));
+        console.log('res', res);
     };
     _keyExtractor = (item, index) => index;
     render() {

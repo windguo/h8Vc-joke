@@ -48,7 +48,7 @@ import PureModalUtil from '../../utils/PureModalUtil';
 import * as WeChat from 'react-native-wechat';
 import storageKeys from '../../utils/storageKeyValue'
 import ScrollTabView from "../ScrollTabView";
-export default class Me extends Component {
+export default class Search extends Component {
     static navigationOptions = {
         tabBarLabel: '搜索',
         tabBarIcon: ({ tintColor, focused }) => (
@@ -60,7 +60,7 @@ export default class Me extends Component {
                     <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
                         <TouchableOpacity activeOpacity={1} onPress={this.clickToSearch}>
                             <View style={{ justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7 }}>
-                                <MaterialIcons name="search" size={25} color='white' />试试试试试试
+                                <MaterialIcons name="search" size={25} color='white' />
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -115,7 +115,7 @@ export default class Me extends Component {
                         description: '海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？',
                         type: 'news',
                         webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc',
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png',
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((e) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
@@ -127,7 +127,7 @@ export default class Me extends Component {
                         description: "海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？",
                         type: 'news',
                         webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc',
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png',
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message) => { message.errCode === 0 ? this.ToastShow('分享成功') : this.ToastShow('分享失败') }).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
@@ -239,7 +239,7 @@ export default class Me extends Component {
                     <View style={{ flexDirection: 'row', alignItems: 'center', height: 50, backgroundColor: 'white', justifyContent: 'space-between' }}>
                         <View style={{ marginLeft: 20, flexDirection: 'row', alignItems: 'center' }}>
                             <IconSimple name="user" size={22} color={Color.FontColor} />
-                            <Text style={{ marginLeft: 10 }}>{this.state.username ? '欢迎您,' + this.state.username : '立即登录哈吧'}</Text>
+                            <Text style={{ marginLeft: 10 }}>{this.state.username ? '欢fjhgffguy迎您,' + this.state.username : '立即登录哈吧'}</Text>
                         </View>
                         <IconSimple name="arrow-right" size={18} color={Color.FontColor} style={{ marginRight: 20 }} />
                     </View>

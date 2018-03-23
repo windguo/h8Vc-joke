@@ -110,7 +110,7 @@ export  default  class Me extends Component {
                         description: '海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？',
                         type: 'news',
                         webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc',
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png',
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
                         Toast.show(error.message);
                     }});
@@ -120,7 +120,7 @@ export  default  class Me extends Component {
                         description: "海量搞笑段子、网名、签名、句子分享平台，有什么理由不来开心？",
                         type: 'news',
                         webpageUrl: Platform.OS === 'ios' ? 'https://itunes.apple.com/cn/app/哈吧-海量精品段子大全/id1353739043?mt=8' : 'https://www.pgyer.com/h8vc' ,
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png',
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);

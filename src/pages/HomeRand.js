@@ -33,7 +33,6 @@ import ModalUtil from '../utils/modalUtil';
 import formatData from '../../src/utils/formatData';
 import Toast from 'react-native-root-toast';
 import LoadError from  '../components/loadError';
-import  _fetch from '../utils/_fetch'
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 import PullList from '../components/pull/PullList'
@@ -42,6 +41,7 @@ import * as WeChat from 'react-native-wechat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
+import HttpUtil from  '../utils/HttpUtil';
 export default class Home extends Component {
     static navigationOptions = {
     };
@@ -75,8 +75,7 @@ export default class Home extends Component {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
             this.flatList.setData(DeepCopyData);
-            Clipboard.setString(item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + "http://m.jianjie8.com/detail/" + item.classid + '/' + item.id);
-            console.log('复制的文本',item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + "http://m.jianjie8.com/detail/" + item.classid + '/' + item.id)
+            Clipboard.setString(item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"") + urlConfig.DetailUrl + item.classid + '/' + item.id);
             Toast.show('复制成功', {
                 duration: Toast.durations.SHORT,
                 position: Toast.positions.CENTER,
@@ -98,8 +97,8 @@ export default class Home extends Component {
                             title: "【哈吧笑话分享】",
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
-                            webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                            webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                            thumbImage: urlConfig.thumbImage,
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                             if (error.message != -2) {
                                 Toast.show(error.message);
@@ -110,8 +109,8 @@ export default class Home extends Component {
                             title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                             type: 'news',
-                            webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                            thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                            webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                            thumbImage: urlConfig.thumbImage,
                         }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                             if (error.message != -2) {
                                 Toast.show(error.message);
@@ -135,7 +134,6 @@ export default class Home extends Component {
     clickToFavas = (classid, id) => {
         let url = urlConfig.FavasURL + '/' + classid + '/' + id;
         this.props.navigation.navigate('Web', { url: url });
-        this.close();
     }
     clickToShare = (type) => {
         this.close();
@@ -146,30 +144,19 @@ export default class Home extends Component {
                         title: "【哈吧笑话分享】",
                         description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         type: 'news',
-                        webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                        webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((e)=>{if (error.message != -2) {
                         Toast.show(error.message);
                     }});
-                    // WeChat.shareToSession({
-                    //     title: "【哈吧笑话分享】",
-                    //     description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
-                    //     type: 'news',
-                    //     webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                    //     thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
-                    // }).catch((error) => {
-                    //     if (error.message != -2) {
-                    //         Toast.show(error.message);
-                    //     }
-                    // });
 
                 } else {
                     WeChat.shareToTimeline({
                         title: "【哈吧笑话分享】" + this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         description: this._shareItem && this._shareItem.smalltext.replace(/^(\r\n)|(\n)|(\r)/,""),
                         type: 'news',
-                        webpageUrl: "http://m.jianjie8.com/detail/" + this._shareItem.classid + '/' + this._shareItem.id,
-                        thumbImage: 'http://www.jianjie8.com/skin/h8/images/icon_share.png'
+                        webpageUrl: urlConfig.DetailUrl + this._shareItem.classid + '/' + this._shareItem.id,
+                        thumbImage: urlConfig.thumbImage,
                     }).then((message)=>{message.errCode === 0  ? this.ToastShow('分享成功') : this.ToastShow('分享失败')}).catch((error) => {
                         if (error.message != -2) {
                             Toast.show(error.message);
@@ -259,91 +246,39 @@ export default class Home extends Component {
     dealWithrequestPage = () =>{
         return  this.requestPageNumber > 1 ? '&page=' + this.requestPageNumber : ''
     }
-    loadData = (resolve) => {
+
+    loadData = async(resolve)=>{
         let url = '';
         if (!this.props.data) {
             return;
         }
         switch (this.props.data.classid) {
             case '0':
-                // url = urlConfig.baseURL + urlConfig.newList;
-                url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
+                url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;;
                 break;
-            // case '1':
-            //    // url =  this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.randomList  : urlConfig.baseURL + urlConfig.randomList;
-            //     url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListData + '&classid=' + this.props.data.classid;
-            //     break;
             default:
                 url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
         }
-        _fetch(fetch(url),30000)
-            .then((response) =>  response.json())
-            .then((responseJson) => {
-                console.log('urlloadDatarespond',responseJson,url);
-                if (responseJson.status === '1') {
-                    // this.updateNumMessage = responseJson.updateNum;
-                    // if (this.updateNumMessage && this.isNotfirstFetch) {  setTimeout(() => {
-                    //     this.setState({loadNewData: true})
-                    // }, 500)};
-                    console.log('loadDataResult',responseJson.result);
-                    this.flatList && this.flatList.setData(this.dealWithLongArray(responseJson.result), 0);
-                    // this.FlatListData = this.dealWithLongArray(responseJson.result);
-                    console.log('loadDataFlatListData',this.FlatListData);
-                    resolve &&  resolve();
-                    WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index,responseJson.result);
-                    setTimeout(() => {
-                        this.setState({loadNewData: false})
-                    }, 1500)
-                    //要求除了最新外其他页面非第一次接口请求都要加上&num
-                    if (this.props.index !== 0){ this.isNotfirstFetch = true};
-                }else{
-                    READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
-                        if (res && res.length > 0) {
-                            this.flatList && this.flatList.setData(res, 0);
-                            this.FlatListData = res;
-                        }else{}
-                    },(err)=>{
-                    });
-
-                    Toast.show(responseJson.message, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                }
-            })
-            .catch((error) => {
-                READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
-                    if (res && res.length > 0) {
-                        this.flatList && this.flatList.setData(res, 0);
-                        this.FlatListData = res;
-                    }else{}
-                },(err)=>{
-                });
-                if(error.message.indexOf('JSON') >= 0) {
-                    Toast.show(('网络错误'), {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                    return ;
-                }
-                Toast.show(error.message, {
-                    duration: Toast.durations.SHORT,
-                    position: Toast.positions.CENTER,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                });
+        console.log('loadUrl',url);
+        let res = await HttpUtil.GET(url);
+        resolve && resolve();
+        if(!res||!res.result){
+            READ_CACHE(storageKeys.homeList + 'page' + this.props.index,(res)=>{
+                if (res && res.length > 0) {
+                    this.flatList && this.flatList.setData(res, 0);
+                    this.FlatListData = res;
+                }else{}
+            },(err)=>{
             });
-    }
+            return;
+        }
+        if (this.props.index !== 0){ this.isNotfirstFetch = true};
+        let result = res.result ? res.result:[];
+        WRITE_CACHE(storageKeys.homeList + 'page' + this.props.index,result);
+        this.flatList && this.flatList.setData(this.dealWithLongArray(result), 0);
+        console.log('res', res);
+    };
+
     dealWithLongArray = (dataArray) => {
         // let waitDealArray = this.state.data.concat(dataArray);
         //下拉刷新来几条数据，就对应的删除几条数据 ，以便填充
@@ -380,11 +315,6 @@ export default class Home extends Component {
         if (this.props.index === global.activeTab){
             this.flatList.scrollToOffset({ offset: 0, animated: true });
             this.flatList.BeginRefresh();
-            //this.loadData()
-            // setTimeout(this.flatList.StopRefresh,1000);
-            //   this.flatList.StopRefresh();
-            //this.flatList.scrollToIndex({animated: true,index :2});
-            // this.setState({refreshing: true});
         }
     }
     ToastShow = (message) => {
@@ -397,9 +327,8 @@ export default class Home extends Component {
             delay: 0,
         });
     }
-    PostThumb = (item,dotop,index) => {
-        //diggtop   //diggbot
-        //  {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩 传1是赞}
+
+    PostThumb = async(item,dotop,index) => {
         try {
             let upDownData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             if (dotop === 0) {
@@ -425,43 +354,27 @@ export default class Home extends Component {
             formData.append("dotop", '' + dotop);
             formData.append("doajax", '' + 1);
             formData.append("ajaxarea", "diggnum");
-
-            fetch(url, {
-                method: 'POST',
-                headers: {},
-                body: formData
-            }).then((respond) => {
-                let message = '';
-                let array = respond._bodyInit.split('|');
-                if (array.length > 0) {
-                    message = array[array.length - 1];
-                }
-                if (message === '谢谢您的支持' || message === '谢谢您的意见') {
-                    this.flatList.setData(upDownData);
-                    //只能操作数据源修改列表数据  很大的损耗啊
-                    this.FlatListData = upDownData;
-                }
-                this.ToastShow(message);
-            }).catch((error) => {
+            let res = await HttpUtil.POST(url,formData,'dotop');
+            if (!res){
                 this.ToastShow('失败');
-                throw error;
-            });
-        }catch (e){ this.ToastShow(e.message);}
-
+                return ;
+            }
+            let message = '';
+            let array = res._bodyInit.split('|');
+            if (array.length > 0) {
+                message = array[array.length - 1];
+            }
+            if (message === '谢谢您的支持' || message === '谢谢您的意见') {
+                this.flatList.setData(upDownData);
+                //只能操作数据源修改列表数据  很大的损耗啊
+                this.FlatListData = upDownData;
+            }
+            this.ToastShow(message);
+        }catch (e){}
     }
-    //ref={(c) => {this.refTextArray.push(c)}}
-//<Text style={{color: '#D3D3D3', marginLeft: 10}}>{formatData(item.newstime)}</Text>
-    // item.smalltext && item.smalltext.replace(/\s+/g, "")
     _renderItem = ({item, index}) => {
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
-                {/*this.refTextArray[index].setNativeProps({*/}
-                {/*style: {color: '#D3D3D3'}*/}
-                {/*});*/}
-                // this.props.navigation.navigate('Detail', {data: this.state.data[index]});
-                // /^\r+|\n+$/g
-                // .replace(/^(\r\n)|(\n)|(\r)$/g,"")
-
             }}>
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
@@ -582,11 +495,12 @@ export default class Home extends Component {
     onPullRelease = async (resolve) => {
         this.loadData(resolve);
     };
-    loadMore = async()=>{
-        // if (this.props.index !== 1) {
-        //     return;
-        // }
 
+
+
+
+
+    loadMore = async()=>{
         let url = '';
         this.requestPageNumber += 1;
         if (!this.props.data) {
@@ -600,70 +514,15 @@ export default class Home extends Component {
                 url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid +  this.dealWithrequestPage():urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid+ this.dealWithrequestPage();
 
         }
-        _fetch(fetch(url),30000)
-            .then((response) => response.json())
-            .then((responseJson) => {
-                console.log('XXXloadMore',responseJson,url);
-                if (responseJson.status === '1') {
-                    this.flatList && this.flatList.setData(this.dealWithLoadMoreData(responseJson.result));
-                    //  this.FlatListData = this.dealWithLoadMoreData(responseJson.result);
-                }else{
-                    Toast.show(responseJson.message, {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                }
-            })
-            .catch((error) => {
-                if(error.message.indexOf('JSON') >= 0) {
-                    Toast.show(('网络错误'), {
-                        duration: Toast.durations.SHORT,
-                        position: Toast.positions.CENTER,
-                        shadow: true,
-                        animation: true,
-                        hideOnPress: true,
-                        delay: 0,
-                    });
-                    return ;
-                }
-                Toast.show(error.message, {
-                    duration: Toast.durations.SHORT,
-                    position: Toast.positions.CENTER,
-                    shadow: true,
-                    animation: true,
-                    hideOnPress: true,
-                    delay: 0,
-                });
-            });
-
+        let res = await HttpUtil.GET(url);
+        if(!res||!res.result){
+            return;
+        }
+        let result = res.result ? res.result:[];
+        this.flatList && this.flatList.setData(this.dealWithLoadMoreData(result));
+        console.log('res', res);
     };
-//     //   <PullList
-//     //  data={this.state.data}
-//     keyExtractor={this._keyExtractor}
-// onPullRelease={this.onPullRelease}
-// renderItem={this._renderItem}
-// onEndReached={this.loadMore}
-// style={{backgroundColor: 'white'}}
-// ref={(c) => {this.flatList = c}}
-// ifRenderFooter={this.props.index !== 1 ? false : true}
-// {this.state.loadNewData ? <View style={{
-//     height: 40,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: '#C9E4F7',
-//     position:'absolute',
-//     left:0,
-//     right:0,
-//     top:0
-// }}>
-// <Text style={{color: '#4884BE'}}>{this.updateNumMessage}</Text>
-// </View> : <View/>}
-//
-// />
+
     _keyExtractor = (item, index) => index;
     render() {
         return (

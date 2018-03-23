@@ -3,13 +3,15 @@
  */
 export default urlConfig = {
     //  baseURL: 'http://jianjie.92kaifa.com',
-    baseURL: 'http://www.jianjie8.com',
+   // baseURL: 'http://www.jianjie8.com',
+    baseURL: baseUrl(),
+
     //举报URL
     ReportURL: 'http://m.jianjie8.com/report',
     // 收藏url
     FavasURL: 'http://m.jianjie8.com/fava',
     agreementURL: 'http://m.jianjie8.com/agreement',
-    suggestURL:"http://www.jianjie8.com/e/tool/feedback/?bid=1",
+    suggestURL:baseUrl() + "/e/tool/feedback/?bid=1",
     //最新更新
     //  newList: '/e/api/?getJson=new',
     // // 随机穿越
@@ -30,16 +32,21 @@ export default urlConfig = {
     //点赞或者踩 {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩踩 传1是赞}
     thumbUpUrl:'/e/public/digg/post/index.php',
     thumbDownUrl:'/e/public/digg/post/diggbot.php',
-    LoginUrl: 'http://www.jianjie8.com/e/member/doaction.php',
+    LoginUrl: baseUrl() + '/e/member/doaction.php',
     // 我发布的内容
-    MyPublishUrl: 'http://www.jianjie8.com/e/api/member/info.php?getJson=article',
+    MyPublishUrl: baseUrl() + '/e/api/member/info.php?getJson=article',
     // 我收藏的内容
-    MyFavasUrl: 'http://www.jianjie8.com/e/api/content/?getJson=favas',
-    userInfo: 'http://www.jianjie8.com/e/api/member/info.php?getJson=article',
+    MyFavasUrl: baseUrl() + '/e/api/content/?getJson=favas',
+    userInfo: baseUrl() + '/e/api/member/info.php?getJson=article',
     //更新检测地址
-    CheckUpdate:"http://www.jianjie8.com/e/api/?getJson=version",
+    CheckUpdate:baseUrl() + "/e/api/?getJson=version",
+    //分享出去的图片
+    thumbImage: baseUrl() + '/skin/h8/images/icon_share.png',
+    //复制完跳去详情
+     DetailUrl: "http://m.jianjie8.com/detail/",
+
 
 }
-//http://www.jianjie8.com/e/api/?getJson=
-//这个域名是复制文本添加的域名
-//m.jianjie8.com
+function baseUrl() {
+    return 'http://www.jianjie8.com';
+}

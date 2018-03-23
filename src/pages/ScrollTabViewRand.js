@@ -42,18 +42,13 @@ import Button from '../components/Button';
 const WIDTH = Dimensions.get('window').width;
 const HEIGHT = Dimensions.get('window').height;
 import {ifIphoneX} from '../utils/iphoneX';
-import _fetch from  '../utils/_fetch'
 import HomeRand from './HomeRand';
 import storageKeys from '../utils/storageKeyValue'
 import codePush from 'react-native-code-push'
 import SplashScreen from 'react-native-splash-screen'
-import RNFetchBlob from 'react-native-fetch-blob'
-import Toast from 'react-native-root-toast';
-import baseConfig from '../utils/baseConfig';
-import * as WeChat from 'react-native-wechat';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import HttpUtil from  '../utils/HttpUtil';
 //<View style={{...header}}>
 // <Image source={require('../assets/reload.png')} style={{width: 25, height: 25}}/>
 export  default  class ScrollTabView extends Component {
@@ -195,19 +190,12 @@ export  default  class ScrollTabView extends Component {
                 break;
         }
     }
-    loadData = () => {
+
+    loadData = async()=>{
         let url = urlConfig.baseURL + urlConfig.sectionListRand;
-        RNFetchBlob.config({fileCache: true, ...baseConfig.BaseTimeOut}).fetch('GET', url, {
-            ...baseConfig.BaseHeaders,
-        }).then((res) => res.json()).then((responseJson) => {
-            console.log("ZZZZ",responseJson);
-            this.setState({renderLoading:false});
-            this.setState({renderError:false});
-            if ((responseJson.result instanceof Array) && responseJson.result.length > 0) {
-                WRITE_CACHE(storageKeys.sectionList, responseJson.result);
-                this.setState({sectionList: responseJson.result});
-            }
-        }).catch((err) => {
+        console.log('sectionList',url);
+        let res = await HttpUtil.GET(url);
+        if(!res||!res.result){
             this.setState({renderLoading:false});
             this.setState({renderError:true});
             READ_CACHE(storageKeys.sectionList, (res) => {
@@ -217,16 +205,15 @@ export  default  class ScrollTabView extends Component {
                 }
             }, (err) => {
             });
-            Toast.show('网络错误', {
-                duration: Toast.durations.LONG,
-                position: Toast.positions.BOTTOM,
-                shadow: true,
-                animation: true,
-                hideOnPress: false,
-                delay: 0
-            });
-        })
-    }
+            return;
+        }
+        this.setState({renderLoading:false});
+        this.setState({renderError:false});
+        let result = res.result ? res.result:[];
+        this.setState({sectionList: result});
+        WRITE_CACHE(storageKeys.sectionList, result);
+        console.log('res', res);
+    };
         renderTab = (tabs) => {
             let array = [];
             array.push(tabs.map((item) => {
