@@ -16,36 +16,41 @@ const baseParams = {
 };
 const TIMEOUT = 30000;
 const CONFIG = {timeout:TIMEOUT,followRedirects:false};
-
+GLOBAL.BaseCode = 0;
 export default class HttpRequest {
 
     static flag = true;
     static NetFlag = true;
     //监听网络连接状态
     static async checkNet(){
-        let data = false;
+        let isNet ={};
         if(HttpRequest.NetFlag){
             HttpRequest.NetFlag = false;
-            data = await NetInfo.isConnected.fetch().then((isConnected) => {
-                console.log('isConnected',isConnected);
-                if(!isConnected){
-                    console.log('HttpUtil 发送没有网络');
-                    DeviceEventEmitter.emit('data', 'NoNetWork');
-                    return false;
-                }else{
-                    console.log('HttpUtil 不发送');
-                    return true;
-                }
+            isNet = await fetch("https://www.baidu.com").then((res)=>{
+                console.log('有网络',res);
+                HttpRequest.NetFlag = true;
+                return true;
             }).catch((err)=>{
-                console.log('HttpUtil 异常');
+                console.log('没有网络',err);
+                DeviceEventEmitter.emit('data', 'NoNetWork');//跳转到没有网路界面
+                setTimeout(()=>{HttpRequest.NetFlag = true;},3000);
                 return false;
             });
-            if(!data){
-                setTimeout(()=>{HttpRequest.NetFlag = true;},3000);
-            }
+            return isNet;
+        };
+    }
+
+    static baseUrl(){
+        console.log("baseUrl BaseCode",GLOBAL.BaseCode);
+        switch(parseInt(GLOBAL.BaseCode)){
+            case 0:
+                return "http://www.jianjie8.com";
+            case 1:
+                return "http://jianjie.92kaifa.com";
+
         }
-        return data;
-    };
+        // return 'http://www.jianjie8.com';
+    }
 
     static async GETtype(url,headers) {
         console.log('GETtype url',url);
@@ -84,7 +89,9 @@ export default class HttpRequest {
     }
 
     static async GET(url,headers) {
-        console.log('url',url);
+        url = url.indexOf("http://m.jianjie8.com")>=0?url:HttpRequest.baseUrl()+url;
+        // url = HttpRequest.baseUrl()+url;
+        console.log('GET url',url);
         let res = await RNFetchBlob.config({fileCache:true,...CONFIG}).fetch('GET',url,{
             ...baseParams,
             ...headers
@@ -92,6 +99,13 @@ export default class HttpRequest {
             console.log('res.json',res.json());
             return res.json();
         }).catch(async (err) => {
+            //检测是否有网络
+            let check = await HttpRequest.checkNet();
+            if (!check) {
+                return false;
+            }
+            // console.log("GET 打印这里111");
+            //检测是否超时
             if (err.message.indexOf('timed out') >= 0) {
                 Toast.show('请求超时', {
                     duration: Toast.durations.LONG,
@@ -103,6 +117,12 @@ export default class HttpRequest {
                 });
                 return false;
             }
+            // console.log("GET 打印这里22222222");
+
+            //切换服务器
+            GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
+            console.log("GET BaseCode",GLOBAL.BaseCode);
+            //检测数据格式
             if(err.message.indexOf('JSON') >= 0) {
                 Toast.show('请求失败', {
                     duration: Toast.durations.LONG,
@@ -114,10 +134,7 @@ export default class HttpRequest {
                 });
                 return false;
             }
-            let check = await HttpRequest.checkNet();
-            if (!check) {
-                return false;
-            }
+
             Toast.show('请求失败', {
                 duration: Toast.durations.LONG,
                 position: Toast.positions.BOTTOM,
@@ -135,6 +152,8 @@ export default class HttpRequest {
     }
 
     static async POST(url, params,type) {
+        url = url.indexOf("http://m.jianjie8.com")>=0?url:HttpRequest.baseUrl()+url;
+        // url = HttpRequest.baseUrl()+url;
        let res = _fetch(fetch(url,{
                 method: 'POST',
                 headers: {...baseParams},
@@ -156,6 +175,16 @@ export default class HttpRequest {
                });
                return false;
            }
+
+           let check = await HttpRequest.checkNet();
+           if (!check) {
+               return false;
+           }
+
+           //切换服务器
+           GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
+           console.log("POST BaseCode",GLOBAL.BaseCode);
+
            if(err.message.indexOf('Unexpected') >= 0) {
                Toast.show('失败', {
                    duration: Toast.durations.LONG,
@@ -167,10 +196,7 @@ export default class HttpRequest {
                });
                return false;
            }
-           let check = await HttpRequest.checkNet();
-           if (!check) {
-               return false;
-           }
+
            Toast.show('失败', {
                duration: Toast.durations.LONG,
                position: Toast.positions.BOTTOM,

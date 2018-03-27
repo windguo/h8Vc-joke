@@ -1,17 +1,16 @@
 /**
  * Created by zhangzuohua on 2018/1/22.
  */
+
 export default urlConfig = {
     //  baseURL: 'http://jianjie.92kaifa.com',
    // baseURL: 'http://www.jianjie8.com',
-    baseURL: baseUrl(),
-
     //举报URL
     ReportURL: 'http://m.jianjie8.com/report',
     // 收藏url
     FavasURL: 'http://m.jianjie8.com/fava',
     agreementURL: 'http://m.jianjie8.com/agreement',
-    suggestURL:baseUrl() + "/e/tool/feedback/?bid=1",
+    suggestURL: "/e/tool/feedback/?bid=1",
     //最新更新
     //  newList: '/e/api/?getJson=new',
     // // 随机穿越
@@ -32,21 +31,19 @@ export default urlConfig = {
     //点赞或者踩 {classid:2,id:2,dotop:1,doajax:1,ajaxarea:'diggnum'dotop这个字段 传0 是踩踩 传1是赞}
     thumbUpUrl:'/e/public/digg/post/index.php',
     thumbDownUrl:'/e/public/digg/post/diggbot.php',
-    LoginUrl: baseUrl() + '/e/member/doaction.php',
+    LoginUrl:  '/e/member/doaction.php',
     // 我发布的内容
-    MyPublishUrl: baseUrl() + '/e/api/member/info.php?getJson=article',
+    MyPublishUrl:  '/e/api/member/info.php?getJson=article',
     // 我收藏的内容
-    MyFavasUrl: baseUrl() + '/e/api/content/?getJson=favas',
-    userInfo: baseUrl() + '/e/api/member/info.php?getJson=article',
+    MyFavasUrl: '/e/api/content/?getJson=favas',
+    userInfo: '/e/api/member/info.php?getJson=article',
     //更新检测地址
-    CheckUpdate:baseUrl() + "/e/api/?getJson=version",
+    CheckUpdate:"/e/api/?getJson=version",
     //分享出去的图片
-    thumbImage: baseUrl() + '/skin/h8/images/icon_share.png',
+    thumbImage: '/skin/h8/images/icon_share.png',
     //复制完跳去详情
      DetailUrl: "http://m.jianjie8.com/detail/",
 
 
 }
-function baseUrl() {
-    return 'http://www.jianjie8.com';
-}
+

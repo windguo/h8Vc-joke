@@ -254,10 +254,10 @@ export default class Home extends Component {
         }
         switch (this.props.data.classid) {
             case '0':
-                url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;;
+                url =  urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;;
                 break;
             default:
-                url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid : urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
+                url = this.isNotfirstFetch ?  urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid : urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid;
         }
         console.log('loadUrl',url);
         let res = await HttpUtil.GET(url);
@@ -343,9 +343,9 @@ export default class Home extends Component {
 
             let url = '';
             if (dotop === 0) {
-                url = urlConfig.baseURL + urlConfig.thumbDownUrl;
+                url =  urlConfig.thumbDownUrl;
             } else if (dotop === 1) {
-                url = urlConfig.baseURL + urlConfig.thumbUpUrl;
+                url =  urlConfig.thumbUpUrl;
             }
             //不用formdate后台解析不出来
             let formData = new FormData();
@@ -508,10 +508,10 @@ export default class Home extends Component {
         }
         switch (this.props.data.classid) {
             case '0':
-                url = urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid + this.dealWithrequestPage();
+                url =  urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid + this.dealWithrequestPage();
                 break;
             default:
-                url = this.isNotfirstFetch ? urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid +  this.dealWithrequestPage():urlConfig.baseURL + urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid+ this.dealWithrequestPage();
+                url = this.isNotfirstFetch ? urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid +  this.dealWithrequestPage():urlConfig.sectionListDataRand + '&classid=' + this.props.data.classid+ this.dealWithrequestPage();
 
         }
         let res = await HttpUtil.GET(url);

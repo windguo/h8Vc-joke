@@ -341,7 +341,7 @@ export  default  class ScrollTabView extends Component {
     }
 
     loadData = async()=>{
-    let url = urlConfig.baseURL + urlConfig.sectionList;
+    let url = urlConfig.sectionList;
     console.log('sectionList',url);
     let res = await HttpUtil.GET(url);
     if(!res||!res.result){

@@ -331,9 +331,9 @@ export default class MyCollectLaugh extends Component {
 
             let url = '';
             if (dotop === 0) {
-                url = urlConfig.baseURL + urlConfig.thumbDownUrl;
+                url =  urlConfig.thumbDownUrl;
             } else if (dotop === 1) {
-                url = urlConfig.baseURL + urlConfig.thumbUpUrl;
+                url =  urlConfig.thumbUpUrl;
             }
             //不用formdate后台解析不出来
             let formData = new FormData();
