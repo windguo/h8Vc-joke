@@ -40,6 +40,8 @@ import storageKeys from '../utils/storageKeyValue'
 import * as WeChat from 'react-native-wechat';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import HttpUtil from  '../utils/HttpUtil';
+import ImageProgress from 'react-native-image-progress';
+import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
 export default class Home extends Component {
     static navigationOptions = {
     };
@@ -234,8 +236,6 @@ export default class Home extends Component {
             easing: Easing.linear // 缓动函数
         }).start());
     };
-
-
     close = ()=>{
         this.setState({
             visible:false
@@ -367,10 +367,29 @@ export default class Home extends Component {
         }catch (e){}
     }
     _renderItem = ({item, index}) => {
+        if (item.adType && item.picUrl) {
+           return  <TouchableOpacity activeOpacity={1} onPress={() => {alert('点击了广告')
+            }}>
+               <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
+                   { item.picUrl ? <ImageProgress
+                       source={{ uri: item.picUrl }}
+                       resizeMode={'cover'}
+                       indicator={Pie}
+                       indicatorProps={{
+                           size: 40,
+                           borderWidth: 0,
+                           color: 'rgba(255, 160, 0, 0.8)',
+                           unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                       }}
+                       style={{width:WIDTH-40,height:100}} />  : null }
+
+
+               </View>
+            </TouchableOpacity>
+        }
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
             }}>
-
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
                     <View style={{ backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingTop: 15, justifyContent: 'space-between' }}>
@@ -431,6 +450,18 @@ export default class Home extends Component {
                             color:item.isCopyed ? '#666666' : 'black',
                             fontWeight:'300'
                         }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                        {item.pic_url ? <ImageProgress
+                            source={{ uri: item.pic_url }}
+                            resizeMode={'cover'}
+                            indicator={Pie}
+                            indicatorProps={{
+                                size: 40,
+                                borderWidth: 0,
+                                color: 'rgba(255, 160, 0, 0.8)',
+                                unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                            }}
+                            style={{width:WIDTH-40,height:200}}
+                        /> : <View/>}
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -466,7 +497,6 @@ export default class Home extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-
                         </View>
                     </View>
                 </View>

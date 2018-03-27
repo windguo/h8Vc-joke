@@ -90,9 +90,8 @@ export default class HttpRequest {
 
     static async GET(url,headers) {
         url = url.indexOf("http://m.jianjie8.com")>=0?url:HttpRequest.baseUrl()+url;
-        // url = HttpRequest.baseUrl()+url;
         console.log('GET url',url);
-        let res = await RNFetchBlob.config({fileCache:true,...CONFIG}).fetch('GET',url,{
+        let res = await RNFetchBlob.config({fileCache:true,...CONFIG}).fetch('GET',url + '&ad=1',{
             ...baseParams,
             ...headers
         }).then((res)=>{
@@ -120,7 +119,7 @@ export default class HttpRequest {
             // console.log("GET 打印这里22222222");
 
             //切换服务器
-            GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
+           // GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
             console.log("GET BaseCode",GLOBAL.BaseCode);
             //检测数据格式
             if(err.message.indexOf('JSON') >= 0) {
@@ -182,7 +181,7 @@ export default class HttpRequest {
            }
 
            //切换服务器
-           GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
+          // GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
            console.log("POST BaseCode",GLOBAL.BaseCode);
 
            if(err.message.indexOf('Unexpected') >= 0) {

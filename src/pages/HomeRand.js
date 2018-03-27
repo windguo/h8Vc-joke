@@ -42,6 +42,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import HttpUtil from  '../utils/HttpUtil';
+import ImageProgress from 'react-native-image-progress';
+import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
 export default class Home extends Component {
     static navigationOptions = {
     };
@@ -438,6 +440,20 @@ export default class Home extends Component {
                             color: item.isCopyed ? '#666666' : 'black',
                             fontWeight: '300'
                         }} onPress={()=>this.setClipboardContent(item.smalltext && item.smalltext,index,item)}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/, "")}</Text>
+                        {item.pic_url ? <ImageProgress
+                            source={{ uri: item.pic_url }}
+                            resizeMode={'contain'}
+                            indicator={Pie}
+                            indicatorProps={{
+                                size: 80,
+                                borderWidth: 0,
+                                color: 'rgba(150, 150, 150, 1)',
+                                unfilledColor: 'rgba(200, 200, 200, 0.2)'
+                            }}
+                            style={{
+                                width: WIDTH-40,
+                                height:200,
+                            }}/> : <View/>}
                         <View
                             style={{
                                 flexDirection: 'row',
