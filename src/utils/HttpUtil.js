@@ -91,11 +91,13 @@ export default class HttpRequest {
     static async GET(url,headers) {
         url = url.indexOf("http://m.jianjie8.com")>=0?url:HttpRequest.baseUrl()+url;
         // url = HttpRequest.baseUrl()+url;
+        url = encodeURI(url);
         console.log('GET url',url);
         let res = await RNFetchBlob.config({fileCache:true,...CONFIG}).fetch('GET',url,{
             ...baseParams,
             ...headers
         }).then((res)=>{
+            console.log('search res',res);
             console.log('res.json',res.json());
             return res.json();
         }).catch(async (err) => {
