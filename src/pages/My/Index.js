@@ -78,12 +78,19 @@ export  default  class Me extends Component {
     componentWillMount() {
         this._ViewHeight = new Animated.Value(0);
     }
+
+    componentWillUnmount() {
+        this.subscription.remove();
+    }
     componentDidMount() {
+        this.subscription = DeviceEventEmitter.addListener('LoginSuccess', this.LoginSuccess);
         setTimeout( ()=> {GLOBAL.userInfo &&  this.setState({username:GLOBAL.userInfo.username})},500);
        // GLOBAL.userInfo &&  this.setState({username:GLOBAL.userInfo.username});
        // alert(JSON.stringify(GLOBAL.userInfo));
     }
-
+    LoginSuccess = () => {
+        this.setState({username:GLOBAL.userInfo.username});
+    }
     pushToWeb = (params) => {
         let url = '';
         if (params === 'yjfk'){
@@ -217,6 +224,7 @@ export  default  class Me extends Component {
     quit = () => {
         REMOVE_ITEM(storageKeys.userInfo);
         this.setState({username:null});
+        global.userInfo = null;
     }
     render() {
         return (

@@ -28,6 +28,7 @@ export default class StyleColor {
     static ffe7d6 = '#ffe7d6';
     static f97578 = '#f97578';
     static FontColor = '#c1c1c1';
+    static redColor = '#f60';
 }
 
 global.Color = StyleColor;

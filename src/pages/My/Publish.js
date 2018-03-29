@@ -44,6 +44,11 @@ import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicon from 'react-native-vector-icons/Ionicons';
 import HttpUtil from  '../../utils/HttpUtil';
 import { ifIphoneX } from '../../utils/iphoneX';
+import AutoHeightImage from 'react-native-auto-height-image';
+import CustomImage from '../../components/CustomImage'
+import GuessText from  '../../components/GuessText'
+import ImageProgress from 'react-native-image-progress';
+import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
 export default class MyCollectLaugh extends Component {
     static navigationOptions = {
         header:({navigation}) =>{
@@ -89,6 +94,9 @@ export default class MyCollectLaugh extends Component {
     componentWillUnmount() {
     }
     setClipboardContent = (text,index,item) => {
+        if(item.classid === '41' || item.classid === '44' || item.classid === '39'){
+            return ;
+        }
         try {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
@@ -355,21 +363,104 @@ export default class MyCollectLaugh extends Component {
             this.ToastShow(message);
         }catch (e){}
     }
+    clickToFavas = (classid,id) => {
+        let url = urlConfig.FavasURL + '/' + classid + '/' + id;
+        this.props.navigation.navigate('Web', { url: url });
+    }
 
+    renderTextAndImage = (item,index) => {
+        if (item.classid === '39'|| item.classid === '41'){
+            return  <View>
+                <Text style={{
+                    fontSize: 16,
+                    lineHeight: 26,
+                    color:item.isCopyed ? '#666666' : 'black',
+                    fontWeight:'300'
+                }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls}
+                /> : <View/> }
+            </View>
+        }else if( item.classid === '42'){
+            return  <View>
+                {item.titlepic ? <AutoHeightImage
+                    width={WIDTH-40}
+                    source = {{uri:item.titlepic}}
+                /> : <View/> }
+            </View>
+        }else if (item.classid === '44') {
+            return   <View>
+                <Text style={{
+                    fontSize: 16,
+                    lineHeight: 26,
+                    color:item.isCopyed ? '#666666' : 'black',
+                    fontWeight:'300'
+                }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                <GuessText style={{fontSize:16,color:Color.redColor}} item={item}>查看答案</GuessText>
+            </View>
+        }else {
+            return  <View>
+                <Text style={{
+                    fontSize: 16,
+                    lineHeight: 26,
+                    color:item.isCopyed ? '#666666' : 'black',
+                    fontWeight:'300'
+                }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+            </View>
+        }
+    }
     _renderItem = ({item, index}) => {
+        if (item.adType && item.picUrl) {
+            return  <TouchableOpacity activeOpacity={1} onPress={() => {
+            }}>
+                <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
+                    { item.picUrl ? <ImageProgress
+                        source={{ uri: item.picUrl }}
+                        resizeMode={'cover'}
+                        indicator={Pie}
+                        indicatorProps={{
+                            size: 40,
+                            borderWidth: 0,
+                            color: 'rgba(255, 160, 0, 0.8)',
+                            unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                        }}
+                        style={{width:WIDTH-40,height:100}} />  : null }
+                </View>
+            </TouchableOpacity>
+        }
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
             }}>
-
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
-                    <View style={{backgroundColor: 'white',paddingHorizontal:15,paddingTop:15}}>
-                        <Text style={{
-                            fontSize: 16,
-                            lineHeight: 26,
-                            color:item.isCopyed ? '#666666' : 'black',
-                            fontWeight:'100'
-                        }}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                    <View style={{ backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingTop: 15, justifyContent: 'space-between' }}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ color: '#666666', fontWeight: '100' }} onPress={() => {
+                                this.props.navigation.navigate('User', {
+                                    username: item.username,
+                                    userid: item.userid
+                                });
+                            }}>
+                                (O ^
+                                <Text>
+                                    {item.username}
+                                </Text>
+                                ^ O)
+                            </Text>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}>
+                            <View>
+                                <Text style={{
+                                    paddingVertical: 2,
+                                    color: '#666666',
+                                    fontWeight: '100'
+                                }}>
+                                    {formatData(parseInt(item.newstime))}
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ backgroundColor: 'white', paddingHorizontal: 20,paddingTop:10}}>
+                        {this.renderTextAndImage(item,index)}
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -378,13 +469,15 @@ export default class MyCollectLaugh extends Component {
                                 justifyContent: 'space-between',
                             }}>
                             <View style={{flexDirection: 'row'}}>
-                                <View style={{flexDirection: 'row'}}><Text style={{paddingVertical: 2,color:'#999999',fontWeight:'100'}}>{formatData(parseInt(item.newstime))}</Text></View></View>
+                                <TouchableOpacity activeOpacity={1}
+                                                  onPress={() => {
+                                                      this.clickToFavas(item.classid, item.id)
+                                                  }}
+                                                  hitSlop={{ left: 10, right: 10, top: 10, bottom: 10 }}>
+                                    <IconSimple name="wallet" size={15} color='#5C5C5C' />
+                                </TouchableOpacity>
+                            </View>
                             <View style={{flexDirection: 'row'}}>
-                                <View style={{flexDirection: 'row'}}>
-                                    <TouchableOpacity activeOpacity={1} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
-                                        {item.isCopyed ?   <Ionicon name="ios-copy-outline" size={15} color='red'/> : <Ionicon name="ios-copy-outline" size={15} color='#5C5C5C'/>}
-                                    </TouchableOpacity>
-                                </View>
                                 <View style={{flexDirection: 'row',marginLeft: 10}}>
                                     <TouchableOpacity activeOpacity={1} onPress={()=>{this.PostThumb(item,1,index)}} hitSlop={{left:10,right:10,top:10,bottom:10}}>
                                         {item.isLike ?   <IconSimple name="like" size={15} color='red'/> : <IconSimple name="like" size={15} color='#5C5C5C'/>}
@@ -403,10 +496,8 @@ export default class MyCollectLaugh extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-
                         </View>
                     </View>
-                    <View style={{height: 1, backgroundColor: '#eee'}}></View>
                 </View>
             </TouchableOpacity>
         )

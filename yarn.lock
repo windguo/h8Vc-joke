@@ -4318,6 +4318,17 @@ react-lifecycles-compat@^1.0.2:
   version "1.0.2"
   resolved "http://registry.npm.taobao.org/react-lifecycles-compat/download/react-lifecycles-compat-1.0.2.tgz#551d8b1d156346e5fcf30ffac9b32ce3f78b8850"
 
+react-native-android-image-polyfill@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/react-native-android-image-polyfill/download/react-native-android-image-polyfill-1.0.0.tgz#f0b61bac0c6a91b8f8f81233ab1998613adf64ac"
+
+react-native-auto-height-image@^1.0.0:
+  version "1.0.0"
+  resolved "http://registry.npm.taobao.org/react-native-auto-height-image/download/react-native-auto-height-image-1.0.0.tgz#24d0ef98fc4c25ef46a7d915b885bc556477cdb9"
+  dependencies:
+    prop-types "^15.5.8"
+    react-native-android-image-polyfill "^1.0.0"
+
 react-native-code-push@5.1.3-beta:
   version "5.1.3-beta"
   resolved "http://registry.npm.taobao.org/react-native-code-push/download/react-native-code-push-5.1.3-beta.tgz#2c8a2be7f519df8f369841d79076af7ecd66d328"
@@ -4362,6 +4373,18 @@ react-native-gesture-handler@^1.0.0-alpha.40:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
+
+"react-native-image-progress@https://github.com/h8vc/react-native-image-progress.git":
+  version "1.1.0"
+  resolved "https://github.com/h8vc/react-native-image-progress.git#9629d5f680a9b05fc082b9d87a591c9c8cbc3171"
+  dependencies:
+    prop-types "^15.5.10"
+
+react-native-progress@^3.4.0:
+  version "3.4.0"
+  resolved "http://registry.npm.taobao.org/react-native-progress/download/react-native-progress-3.4.0.tgz#c002e6efb2f0b82dd6889510e669c492da2718ac"
+  dependencies:
+    prop-types "^15.5.8"
 
 react-native-root-siblings@^3.0.0:
   version "3.0.0"

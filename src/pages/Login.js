@@ -22,7 +22,8 @@ import {
     InteractionManager,
     TouchableHighlight,
     TextInput,
-    Modal
+    Modal,
+    DeviceEventEmitter
 } from 'react-native';
 import { NavigationActions } from 'react-navigation'
 import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
@@ -112,7 +113,9 @@ export default class Login extends React.Component {
         WRITE_CACHE(storageKeys.userInfo,res.result);
         GLOBAL.userInfo = res.result;
         this.props.navigation.goBack(null);
-        this.props.navigation.state.params.callBack && this.props.navigation.state.params.callBack(res.result.username);
+        this.props.navigation.state.params && this.props.navigation.state.params.callBack(res.result.username);
+        DeviceEventEmitter.emit('LoginSuccess');
+
 
     }
     render(){
@@ -148,9 +151,9 @@ export default class Login extends React.Component {
                     height:SCALE(120),
                     justifyContent:'center',
                     alignItems:'center',
-                    backgroundColor:'#C7272F'
+                    backgroundColor:'#ff6600'
                 }}>
-                    <Text style={{fontSize:FONT(18),paddingTop:15,paddingBottom:15,backgroundColor:'transparent',color:'white',textAlign:'center'}}>立即登录</Text>
+                    <Text style={{fontSize:FONT(18),paddingTop:10,paddingBottom:10,backgroundColor:'transparent',color:'white',textAlign:'center'}}>立即登录</Text>
                 </View>
             </TouchableOpacity>
             <Modal animationType={"fade"}

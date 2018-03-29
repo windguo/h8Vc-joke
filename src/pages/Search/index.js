@@ -178,10 +178,10 @@ export default class SearchTag extends Component {
                                   activeOpacity={0.8}
                                   onPress={() => this.searchKey(this.state.tag[i].name)}>
                     <View style={{
-                        width: 100, height: 40, backgroundColor: 'white', justifyContent: 'center',
-                        alignItems: 'center', borderRadius: 20, marginBottom: 20, marginRight: 20
+                        width: 70, height: 40, backgroundColor: 'white', justifyContent: 'center',
+                        alignItems: 'center', borderRadius: 20, marginBottom: 20, marginRight: 10
                     }}>
-                        <Text style={{fontSize: 18}}>{this.state.tag[i].name}</Text>
+                        <Text style={{fontSize: 16}}>{this.state.tag[i].name}</Text>
                     </View>
                 </TouchableOpacity>)
         }
@@ -193,7 +193,7 @@ export default class SearchTag extends Component {
             return (
                 <ScrollView
                     style={{flex:1}}
-                    contentContainerStyle={{flex: 1,marginLeft:20,marginTop:20,flexDirection:'row', flexWrap:'wrap',justifyContent:'center'}} >
+                    contentContainerStyle={{flex: 1,marginLeft:10,marginTop:20,flexDirection:'row', flexWrap:'wrap',justifyContent:'center'}} >
                     {this.renderTag()}
                 </ScrollView>
             );

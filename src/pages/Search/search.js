@@ -43,6 +43,11 @@ import ModalUtil from '../../utils/modalUtil';
 import HttpUtil from "../../utils/HttpUtil";
 import formatData from "../../utils/formatData";
 import Toast from "react-native-root-toast";
+import ImageProgress from 'react-native-image-progress';
+import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
+import AutoHeightImage from 'react-native-auto-height-image';
+import CustomImage from '../../components/CustomImage'
+import GuessText from  '../../components/GuessText'
 export default class Search extends Component {
 
     static key = "";
@@ -394,6 +399,9 @@ export default class Search extends Component {
     }
 
     setClipboardContent = (text,index,item) => {
+        if(item.classid === '41' || item.classid === '44' || item.classid === '39'){
+            return ;
+        }
         try {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
@@ -454,13 +462,72 @@ export default class Search extends Component {
             this.ToastShow(message);
         }catch (e){}
     }
-
-
+    renderTextAndImage = (item,index) => {
+        if (item.classid === '39'|| item.classid === '41'){
+            return  <View>
+                <Text style={{
+                    fontSize: 16,
+                    lineHeight: 26,
+                    color:item.isCopyed ? '#666666' : 'black',
+                    fontWeight:'300'
+                }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls}
+                /> : <View/> }
+            </View>
+        }else if( item.classid === '42'){
+            return  <View>
+                {item.titlepic ? <AutoHeightImage
+                    width={WIDTH-40}
+                    source = {{uri:item.titlepic}}
+                /> : <View/> }
+            </View>
+        }else if (item.classid === '44') {
+            return   <View>
+                <Text style={{
+                    fontSize: 16,
+                    lineHeight: 26,
+                    color:item.isCopyed ? '#666666' : 'black',
+                    fontWeight:'300'
+                }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                <GuessText style={{fontSize:16,color:Color.redColor}} item={item}>查看答案</GuessText>
+            </View>
+        }else {
+            return  <View>
+                <Text style={{
+                    fontSize: 16,
+                    lineHeight: 26,
+                    color:item.isCopyed ? '#666666' : 'black',
+                    fontWeight:'300'
+                }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+            </View>
+        }
+    }
+    clickToFavas = (classid,id) => {
+        let url = urlConfig.FavasURL + '/' + classid + '/' + id;
+        this.props.navigation.navigate('Web', { url: url });
+    }
     _renderItem = ({item, index}) => {
+        if (item.adType && item.picUrl) {
+            return  <TouchableOpacity activeOpacity={1} onPress={() => {
+            }}>
+                <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
+                    { item.picUrl ? <ImageProgress
+                        source={{ uri: item.picUrl }}
+                        resizeMode={'cover'}
+                        indicator={Pie}
+                        indicatorProps={{
+                            size: 40,
+                            borderWidth: 0,
+                            color: 'rgba(255, 160, 0, 0.8)',
+                            unfilledColor: 'rgba(200, 200, 200, 0.1)'
+                        }}
+                        style={{width:WIDTH-40,height:100}} />  : null }
+                </View>
+            </TouchableOpacity>
+        }
         return (
             <TouchableOpacity activeOpacity={1} onPress={() => {
             }}>
-
                 <View>
                     {index === 0 ? <View style={{width:WIDTH,height:10,backgroundColor:Color.f5f5f5}}/> :<View/>}
                     <View style={{ backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingTop: 15, justifyContent: 'space-between' }}>
@@ -479,48 +546,19 @@ export default class Search extends Component {
                             </Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
-                            {(item.classid === '0' || item.classid === '1') ? <View style={{ flexDirection: 'row' }}>
-                                    <Text style={{
-                                        paddingHorizontal: 6,
-                                        paddingVertical: 2,
-                                        borderWidth: 1,
-                                        borderRadius: 10,
-                                        fontWeight: '100',
-                                        borderColor: '#eee'
-                                    }}
-                                          onPress={() => {
-                                              // this.props.pageNumber(parseInt(item.classid))
-                                          }}>
-                                        {item.classname && item.classname}
-                                    </Text>
-                                    <Text style={{
-                                        marginLeft: 10,
-                                        paddingVertical: 2,
-                                        color: '#666666',
-                                        fontWeight: '100'
-                                    }}>
-                                        {formatData(parseInt(item.newstime))}
-                                    </Text>
-                                </View> :
-                                <View>
-                                    <Text style={{
-                                        paddingVertical: 2,
-                                        color: '#666666',
-                                        fontWeight: '100'
-                                    }}>
-                                        {formatData(parseInt(item.newstime))}
-                                    </Text>
-                                </View>
-                            }
+                            <View>
+                                <Text style={{
+                                    paddingVertical: 2,
+                                    color: '#666666',
+                                    fontWeight: '100'
+                                }}>
+                                    {formatData(parseInt(item.newstime))}
+                                </Text>
+                            </View>
                         </View>
                     </View>
                     <View style={{ backgroundColor: 'white', paddingHorizontal: 20,paddingTop:10}}>
-                        <Text style={{
-                            fontSize: 16,
-                            lineHeight: 26,
-                            color:item.isCopyed ? '#666666' : 'black',
-                            fontWeight:'300'
-                        }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+                        {this.renderTextAndImage(item,index)}
                         <View
                             style={{
                                 flexDirection: 'row',
@@ -556,7 +594,6 @@ export default class Search extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
-
                         </View>
                     </View>
                 </View>
@@ -571,12 +608,12 @@ export default class Search extends Component {
             <View style={{flex: 1}} >
                 <PullList
                     //  data={this.state.data}
-                    contentContainerStyle={{justifyContent:"center", alignItems:'center'}}
+                  //  contentContainerStyle={{justifyContent:"center", alignItems:'center'}}
                     keyExtractor={this._keyExtractor}
                     onPullRelease={this.onPullRelease}
                     renderItem={this._renderItem}
                     onEndReached={this.loadMore}
-                    style={{flex: 1,backgroundColor: Color.f5f5f5}}
+                    style={{backgroundColor: Color.f5f5f5}}
                     ref={(c) => {this.flatList = c}}
                     ifRenderFooter={true}
                 />

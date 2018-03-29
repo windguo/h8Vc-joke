@@ -42,6 +42,9 @@ import IconSimple from 'react-native-vector-icons/SimpleLineIcons';
 import HttpUtil from  '../utils/HttpUtil';
 import ImageProgress from 'react-native-image-progress';
 import {Pie,Bar,Circle,CircleSnail} from 'react-native-progress';
+import AutoHeightImage from 'react-native-auto-height-image';
+import CustomImage from '../components/CustomImage'
+import GuessText from  '../components/GuessText'
 export default class Home extends Component {
     static navigationOptions = {
     };
@@ -71,6 +74,9 @@ export default class Home extends Component {
         this.subscription.remove();
     }
     setClipboardContent = (text,index,item) => {
+        if(item.classid === '41' || item.classid === '44' || item.classid === '39'){
+            return ;
+        }
         try {
             let DeepCopyData = [].concat(JSON.parse(JSON.stringify(this.FlatListData)));
             DeepCopyData[index].isCopyed = true;
@@ -366,9 +372,50 @@ export default class Home extends Component {
              this.ToastShow(message);
         }catch (e){}
     }
+
+    renderTextAndImage = (item,index) => {
+    if (item.classid === '39' || item.classid === '41' ){
+        return  <View>
+            <Text style={{
+                fontSize: 16,
+                lineHeight: 26,
+                color:item.isCopyed ? '#666666' : 'black',
+                fontWeight:'300'
+            }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+            {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls}
+            /> : <View/> }
+        </View>
+    }else if( item.classid === '42'){
+        return  <View>
+            {item.titlepic ? <AutoHeightImage
+            width={WIDTH-40}
+            source = {{uri:item.titlepic}}
+            /> : <View/> }
+        </View>
+    }else if (item.classid === '44') {
+     return   <View>
+        <Text style={{
+            fontSize: 16,
+            lineHeight: 26,
+            color:item.isCopyed ? '#666666' : 'black',
+            fontWeight:'300'
+        }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+        <GuessText style={{fontSize:16,color:Color.redColor}} item={item}>查看答案</GuessText>
+        </View>
+    }else {
+        return  <View>
+            <Text style={{
+                fontSize: 16,
+                lineHeight: 26,
+                color:item.isCopyed ? '#666666' : 'black',
+                fontWeight:'300'
+            }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
+        </View>
+    }
+    }
     _renderItem = ({item, index}) => {
         if (item.adType && item.picUrl) {
-           return  <TouchableOpacity activeOpacity={1} onPress={() => {alert('点击了广告')
+           return  <TouchableOpacity activeOpacity={1} onPress={() => {
             }}>
                <View style={{backgroundColor:'#ffffff',flexDirection: 'row', paddingHorizontal: 20, paddingVertical:15, justifyContent: 'center',alignItems:'center'}}>
                    { item.picUrl ? <ImageProgress
@@ -382,8 +429,6 @@ export default class Home extends Component {
                            unfilledColor: 'rgba(200, 200, 200, 0.1)'
                        }}
                        style={{width:WIDTH-40,height:100}} />  : null }
-
-
                </View>
             </TouchableOpacity>
         }
@@ -444,24 +489,7 @@ export default class Home extends Component {
                         </View>
                     </View>
                     <View style={{ backgroundColor: 'white', paddingHorizontal: 20,paddingTop:10}}>
-                        <Text style={{
-                            fontSize: 16,
-                            lineHeight: 26,
-                            color:item.isCopyed ? '#666666' : 'black',
-                            fontWeight:'300'
-                        }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-                        {item.pic_url ? <ImageProgress
-                            source={{ uri: item.pic_url }}
-                            resizeMode={'cover'}
-                            indicator={Pie}
-                            indicatorProps={{
-                                size: 40,
-                                borderWidth: 0,
-                                color: 'rgba(255, 160, 0, 0.8)',
-                                unfilledColor: 'rgba(200, 200, 200, 0.1)'
-                            }}
-                            style={{width:WIDTH-40,height:200}}
-                        /> : <View/>}
+                        {this.renderTextAndImage(item,index)}
                         <View
                             style={{
                                 flexDirection: 'row',

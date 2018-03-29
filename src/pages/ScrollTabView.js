@@ -67,7 +67,7 @@ export  default  class ScrollTabView extends Component {
                         navigation.state.routes[0].routes[0].params.leftFuc && navigation.state.routes[0].routes[0].params.leftFuc();
                     }}>
                         <View style={{justifyContent: 'center', marginLeft: 10, alignItems: 'center', height: 43.7}}>
-                            <IconSimple name="refresh" size={25} color='white'/>
+                            <MaterialIcons name="search" size={25} color='white'/>
                         </View>
                     </TouchableOpacity>
                     <Text style={{fontSize: 17, textAlign: 'center', lineHeight: 43.7, color: 'white', fontWeight:'100'}}>哈吧</Text>
@@ -154,8 +154,11 @@ export  default  class ScrollTabView extends Component {
                 }else{
                     url = urlConfig.pubLishUrl + '/?classid=' + global.activeClassId;
                 }
-
-                this.props.navigation.navigate('Web',{url:url});
+                if (global.userInfo){
+                    this.props.navigation.navigate('Web',{url:url});
+                }else{
+                    this.props.navigation.navigate('Login');
+                }
             },
             leftFuc: () => {
                 this.props.navigation.navigate('SearchTag');
