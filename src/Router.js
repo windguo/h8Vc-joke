@@ -21,7 +21,8 @@ import ScrollTabView from './pages/ScrollTabView';
 import ScrollTabViewRand from './pages/ScrollTabViewRand';
 import Tab from '../src/components/Tab'
 import Login from  '../src/pages/Login'
-import Search from './pages/Search/Index';
+import SearchTag from './pages/Search/index';
+import Search from './pages/Search/search';
 import My from './pages/My/Index';
 import Publish from '../src/pages/My/Publish'
 import Collection from '../src/pages/My/Collection'
@@ -109,7 +110,8 @@ const NavgationApp = StackNavigator({
     Publish: {screen: Publish},
     Collection: {screen: Collection},
     User: {screen: User},
-    Search: {screen: Search}
+    SearchTag: {screen: SearchTag},
+    Search:{screen:Search}
 }, {initialRouteName: 'Index'});
 export default class Router extends React.Component {
     render() {

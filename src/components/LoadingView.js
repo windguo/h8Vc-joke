@@ -42,11 +42,17 @@ export  default  class LoadingView extends Component {
     componentDidMount() {
     }
     render() {
-        return (
-            <View style={{justifyContent:'center',alignItems:'center',flex:1}}>
+        if(this.props.visible){
+            return (
+                <View style={{justifyContent:'center',alignItems:'center',flex:1}}>
+                    <ActivityIndicator color = {"black"} animating size={"large"}/>
+                </View>
+            );
 
-            </View>
-        );
+        }else{
+            return <View/>;
+        }
+
     }
 }
 

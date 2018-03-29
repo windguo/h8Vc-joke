@@ -43,6 +43,7 @@ export default urlConfig = {
     thumbImage: '/skin/h8/images/icon_share.png',
     //复制完跳去详情
      DetailUrl: "http://m.jianjie8.com/detail/",
+     Search:'/e/api/search/?getJson='
 
 
 }

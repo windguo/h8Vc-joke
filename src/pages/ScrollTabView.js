@@ -158,7 +158,8 @@ export  default  class ScrollTabView extends Component {
                 this.props.navigation.navigate('Web',{url:url});
             },
             leftFuc: () => {
-                DeviceEventEmitter.emit('reloadData')
+                this.props.navigation.navigate('SearchTag');
+                // DeviceEventEmitter.emit('reloadData')
             }
         });
         InteractionManager.runAfterInteractions(() => {
