@@ -377,7 +377,7 @@ export default class MyCollectLaugh extends Component {
                     color:item.isCopyed ? '#666666' : 'black',
                     fontWeight:'300'
                 }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-                {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls}
+                {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls} style={{marginTop:10}}
                 /> : <View/> }
             </View>
         }else if( item.classid === '42'){
@@ -395,7 +395,7 @@ export default class MyCollectLaugh extends Component {
                     color:item.isCopyed ? '#666666' : 'black',
                     fontWeight:'300'
                 }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-                <GuessText style={{fontSize:16,color:Color.redColor}} item={item}>查看答案</GuessText>
+                <GuessText style={{fontSize:16,color:Color.redColor,marginTop:10}} item={item}>查看答案</GuessText>
             </View>
         }else {
             return  <View>

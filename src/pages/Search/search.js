@@ -92,6 +92,8 @@ export default class Search extends Component {
                                 marginHorizontal: 20,
                                 width: WIDTH - 140,
                                 height: 32,
+                                paddingTop:0,
+                                paddingBottom:0,
                                 paddingHorizontal: 20,
                                 backgroundColor: '#ffffff'
                             }}
@@ -120,7 +122,7 @@ export default class Search extends Component {
                             navigation.state.routes[navigation.state.routes.length-1].params && navigation.state.routes[navigation.state.routes.length-1].params.searchKey(Search.key);
                         }}>
                             <View>
-                                <Text style={{color: '#ffffff',fontWeight:'bold',fontSize:16}}>搜 索</Text>
+                                <Text style={{color: '#ffffff',fontWeight:'bold',fontSize:16,marginRight:10}}>搜 索</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -471,7 +473,7 @@ export default class Search extends Component {
                     color:item.isCopyed ? '#666666' : 'black',
                     fontWeight:'300'
                 }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-                {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls}
+                {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls} style={{marginTop:10}}
                 /> : <View/> }
             </View>
         }else if( item.classid === '42'){
@@ -489,7 +491,7 @@ export default class Search extends Component {
                     color:item.isCopyed ? '#666666' : 'black',
                     fontWeight:'300'
                 }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-                <GuessText style={{fontSize:16,color:Color.redColor}} item={item}>查看答案</GuessText>
+                <GuessText style={{fontSize:16,color:Color.redColor,marginTop:10}} item={item}>查看答案</GuessText>
             </View>
         }else {
             return  <View>
@@ -637,8 +639,8 @@ const header = {
             height: 64,
         }),
     flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'flex-end'
+     justifyContent: 'space-between',
+     alignItems: 'flex-end'
 }
 const styles = StyleSheet.create({
     base: {

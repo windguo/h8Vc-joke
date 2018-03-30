@@ -93,7 +93,7 @@ export default class HttpRequest {
 
         // url = HttpRequest.baseUrl()+url;
         url = encodeURI(url);
-      //  url = 'http://www.jianjie8.com/e/api/?getJson=test';
+       // url = 'http://www.jianjie8.com/e/api/?getJson=test';
         console.log('GET url',url);
         let res = await RNFetchBlob.config({fileCache:true,...CONFIG}).fetch('GET',url + '&ad=1',{
             ...baseParams,
@@ -124,8 +124,8 @@ export default class HttpRequest {
             // console.log("GET 打印这里22222222");
 
             //切换服务器
-            GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
-            console.log("GET BaseCode",GLOBAL.BaseCode);
+          //  GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
+          //  console.log("GET BaseCode",GLOBAL.BaseCode);
             //检测数据格式
             if(err.message.indexOf('JSON') >= 0) {
                 Toast.show('请求失败', {
@@ -186,8 +186,8 @@ export default class HttpRequest {
            }
 
            //切换服务器
-           GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
-           console.log("POST BaseCode",GLOBAL.BaseCode);
+         //  GLOBAL.BaseCode = (parseInt(GLOBAL.BaseCode)+1)%2;
+        //   console.log("POST BaseCode",GLOBAL.BaseCode);
 
            if(err.message.indexOf('Unexpected') >= 0) {
                Toast.show('失败', {

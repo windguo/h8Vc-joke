@@ -144,6 +144,7 @@ export default class Home extends Component {
         this.props.navigation.navigate('Web', { url: url });
     }
     clickToShare = (type) => {
+        console.log('XXXXXXXXXXXXX',urlConfig.thumbImage);
         this.close();
         WeChat.isWXAppInstalled().then((isInstalled) => {
             if (isInstalled) {
@@ -376,14 +377,14 @@ export default class Home extends Component {
     renderTextAndImage = (item,index) => {
     if (item.classid === '39' || item.classid === '41' ){
         return  <View>
+
             <Text style={{
                 fontSize: 16,
                 lineHeight: 26,
                 color:item.isCopyed ? '#666666' : 'black',
                 fontWeight:'300'
             }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-            {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls}
-            /> : <View/> }
+                 {item.pic_urls ? <CustomImage titlepic={item.titlepic} pic_urls={item.pic_urls} style={{marginTop:10}}/> : <View/> }
         </View>
     }else if( item.classid === '42'){
         return  <View>
@@ -400,7 +401,7 @@ export default class Home extends Component {
             color:item.isCopyed ? '#666666' : 'black',
             fontWeight:'300'
         }} onPress={()=>{this.setClipboardContent(item.smalltext && item.smalltext,index,item)}}>{item.smalltext && item.smalltext.replace(/^(\r\n)|(\n)|(\r)/,"")}</Text>
-        <GuessText style={{fontSize:16,color:Color.redColor}} item={item}>查看答案</GuessText>
+        <GuessText style={{fontSize:16,color:Color.redColor,marginTop:10}} item={item}>查看答案</GuessText>
         </View>
     }else {
         return  <View>

@@ -81,17 +81,18 @@ export default class SearchTag extends Component {
                             }}
                             defaultValue={navigation.state.routes[navigation.state.routes.length-1].params && navigation.state.routes[navigation.state.routes.length-1].params.key}
                             style={{ 
-                                fontSize: 16, 
+                                fontSize: 16,
                                 color: '#555555',
                                 borderRadius: 10,
                                 marginHorizontal: 20, 
                                 width: WIDTH - 140,
                                 height: 32,
                                 paddingHorizontal: 20,
+                                paddingTop:0,
+                                paddingBottom:0,
                                 backgroundColor: '#ffffff'
                             }}
                             underlineColorAndroid="transparent">
-
                         </TextInput>
                         <View style={{
                             position:'absolute',
@@ -116,7 +117,7 @@ export default class SearchTag extends Component {
                             navigation.state.routes[navigation.state.routes.length-1].params && navigation.state.routes[navigation.state.routes.length-1].params.searchKey(SearchTag.key);
                             }}>
                             <View>
-                                <Text style={{color: '#ffffff',fontWeight:'bold',fontSize:16}}>搜 索</Text>
+                                <Text style={{color: '#ffffff',fontWeight:'bold',fontSize:16,marginRight:10}}>搜 索</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -220,8 +221,8 @@ const header = {
             height: 64,
         }),
     flexDirection: 'row',
-    // justifyContent: 'space-between',
-    // alignItems: 'flex-end'
+    justifyContent: 'space-between',
+    alignItems: 'flex-end'
 }
 
 const styles = StyleSheet.create({

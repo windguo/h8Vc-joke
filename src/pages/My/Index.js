@@ -78,7 +78,6 @@ export  default  class Me extends Component {
     componentWillMount() {
         this._ViewHeight = new Animated.Value(0);
     }
-
     componentWillUnmount() {
         this.subscription.remove();
     }

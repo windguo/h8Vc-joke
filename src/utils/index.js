@@ -39,6 +39,13 @@ global.SCALE = scaleSize;
 global.WIDTH = deviceWidth;
 
 global.HEIGHT = deviceHeight;
+if(__DEV__){
+    // debug模式
+   // global.console.log = ()=>{};
+}else{
+    // release模式
+    global.console.log = ()=>{};
+}
 
 
 const StatusBarHeight =()=>{

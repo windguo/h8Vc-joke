@@ -34,6 +34,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 import { ifIphoneX } from '../utils/iphoneX';
 import HttpUtil from  '../utils/HttpUtil';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 export default class Login extends React.Component {
     static navigationOptions = {
         header:({navigation}) =>{
@@ -106,6 +107,7 @@ export default class Login extends React.Component {
         let res = await HttpUtil.POST(url,formData);
         console.log('xxxxxx',res);
         if (!res || !res.result){
+            this.setState({visble:false});
           //  this.ToastShow('失败');
             return ;
         }
@@ -118,8 +120,13 @@ export default class Login extends React.Component {
 
 
     }
+    // <ScrollView  style={{ backgroundColor:'#eeeeee', width: WIDTH,flex:1}} contentContainerStyle={{alignItems:'center'}}>
+    // </ScrollView>
     render(){
-        return (<ScrollView style={{ backgroundColor:'#eeeeee', width: WIDTH,flex:1}} contentContainerStyle={{alignItems:'center'}}>
+        return (
+            <KeyboardAwareScrollView
+                enableOnAndroid = {false}>
+                <ScrollView  style={{ backgroundColor:'#eeeeee', width: WIDTH,flex:1}} contentContainerStyle={{alignItems:'center'}}>
             <View style={{marginTop:HEIGHT *0.2,width:WIDTH,flexDirection:'row',alignItems:'center',justifyContent:'center'}}>
                 <TextInput
                     numberOfLines={1}
@@ -148,7 +155,7 @@ export default class Login extends React.Component {
                 <View style={{
                     width:WIDTH - 80,
                     borderRadius:10,
-                    height:SCALE(120),
+                    height:50,
                     justifyContent:'center',
                     alignItems:'center',
                     backgroundColor:'#ff6600'
@@ -164,7 +171,9 @@ export default class Login extends React.Component {
                     <Text style={[styles.load_text, this.props.textStyle]}>登录中</Text>
                 </View>
             </Modal>
-        </ScrollView>)
+
+                </ScrollView>
+            </KeyboardAwareScrollView>)
     }
 }
 const styles = StyleSheet.create({

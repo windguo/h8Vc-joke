@@ -40,7 +40,7 @@ export default urlConfig = {
     //更新检测地址
     CheckUpdate:"/e/api/?getJson=version",
     //分享出去的图片
-    thumbImage: '/skin/h8/images/icon_share.png',
+    thumbImage: 'http://jianjie8.com/skin/h8/images/icon_share.png',
     //复制完跳去详情
      DetailUrl: "http://m.jianjie8.com/detail/",
      Search:'/e/api/search/?getJson='
