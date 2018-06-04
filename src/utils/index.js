@@ -3,6 +3,7 @@
  */
 import './storageInit'
 import './StyleColor'
+import './Skin'
 import {Dimensions,PixelRatio,Platform,NativeModules} from 'react-native';
 export const deviceWidth = Dimensions.get('window').width;      //设备的宽度
 export const deviceHeight = Dimensions.get('window').height;    //设备的高度

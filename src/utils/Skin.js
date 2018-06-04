@@ -2,7 +2,7 @@
  * Created by wuyunqiang on 2017/8/8.
  */
 
-export default class StyleColor {
+export default class type {
     static f5f5f5 = '#f5f5f5';//全局背景色
     static C666666 = '#666666';
     static dddddd = '#dddddd';
@@ -11,7 +11,11 @@ export default class StyleColor {
     static redColor = '#f60';
 
     //红色系
-    static headerBg = "../assets/backgroundImageHeader.png";
+    static headerBgColor = "red";
+
+    //橙色系
+    static headerBgColor = "orange";
+
 }
 
-global.Color = StyleColor;
+global.Skin = type;

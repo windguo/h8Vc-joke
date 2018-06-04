@@ -469,12 +469,12 @@ export default class Home extends Component {
                                     {item.classname && item.classname}
                                 </Text>
                                 <Text style={{
-                                    marginLeft: 10,
+                                    // marginLeft: 10,
                                     paddingVertical: 2,
                                     color: '#666666',
                                     fontWeight: '100'
                                 }}>
-                                    {formatData(parseInt(item.newstime))}
+                                    {/* {formatData(parseInt(item.newstime))} */}
                                 </Text>
                             </View> :
                                 <View>
@@ -483,7 +483,7 @@ export default class Home extends Component {
                                         color: '#666666',
                                         fontWeight: '100'
                                     }}>
-                                        {formatData(parseInt(item.newstime))}
+                                        {/* {formatData(parseInt(item.newstime))} */}
                                     </Text>
                                 </View>
                             }
@@ -580,6 +580,9 @@ export default class Home extends Component {
     }
 }
 const styles = StyleSheet.create({
+    imageStyle:{
+        width:WIDTH,
+    },
     base: {
         flex: 1
     },
