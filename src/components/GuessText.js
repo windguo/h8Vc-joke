@@ -46,11 +46,16 @@ export  default  class GuessText extends Component {
     }
     componentDidMount() {
     }
+    componentWillReceiveProps(nextProps){
+        if (nextProps.item !== this.props.item){
+            this.setState({showAnswer:false});
+        }
+    }
     render() {
         return (
             <View style={styles.Container}>
                 <Text style={this.props.style} onPress={()=>{this.setState({showAnswer:true})}}>{this.props.children}</Text>
-                {this.state.showAnswer ? <Text style={[this.props.style,{color:'black'},{marginLeft:10}]}>{this.props.item && this.props.item.miyu_answer}</Text> : null}
+                {this.state.showAnswer ? <Text style={[this.props.style,{color:'black'},{marginTop:10}]}>{this.props.item && this.props.item.miyu_answer}</Text> : null}
             </View>
         );
     }
@@ -58,7 +63,6 @@ export  default  class GuessText extends Component {
 const styles = StyleSheet.create({
     Container : {
         flex:1,
-        flexDirection:'row',
     }
 })
 

@@ -10,7 +10,7 @@ export default urlConfig = {
     // 收藏url
     FavasURL: 'http://m.jianjie8.com/fava',
     agreementURL: 'http://m.jianjie8.com/agreement',
-    suggestURL: "/e/tool/feedback/?bid=1",
+    suggestURL: "http://www.jianjie8.com/e/tool/feedback/?bid=1",
     //最新更新
     //  newList: '/e/api/?getJson=new',
     // // 随机穿越
